@@ -1,0 +1,7 @@
+# Golang
+/backend/bin
+/backend/tmp
+
+# OS
+.DS_Store
+.env
