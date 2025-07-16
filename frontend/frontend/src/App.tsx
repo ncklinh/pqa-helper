@@ -3,6 +3,8 @@ import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
 import LoginForm from "./components/LoginForm";
 import RepoListPage from "./components/RepoListPage";
 import PRListPage from "./components/PRListPage";
+import PullRequestDetailPage from "./components/PullRequestDetailPage";
+import { PullRequest } from "./mockData";
 
 const theme = createTheme({
   palette: {
@@ -19,13 +21,14 @@ const theme = createTheme({
   },
 });
 
-type Screen = "login" | "repo" | "pr";
+type Screen = "login" | "repo" | "pr" | "pr-detail";
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>("login");
   const [username, setUsername] = useState("");
   const [appPassword, setAppPassword] = useState("");
   const [selectedRepo, setSelectedRepo] = useState("");
+  const [selectedPr, setSelectedPr] = useState<PullRequest | null>(null);
 
   const handleLogin = () => {
     if (username && appPassword) {
@@ -33,14 +36,19 @@ export default function App() {
     }
   };
 
+  const handleBackToRepo = () => {
+    setScreen("repo");
+    setSelectedRepo("");
+  };
+
   const handleSelectRepo = (repo: string) => {
     setSelectedRepo(repo);
     setScreen("pr");
   };
 
-  const handleBackToRepo = () => {
-    setScreen("repo");
-    setSelectedRepo("");
+  const handleViewPrDetail = (pr: PullRequest) => {
+    setSelectedPr(pr);
+    setScreen("pr-detail");
   };
 
   return (
@@ -68,7 +76,17 @@ export default function App() {
           />
         )}{" "}
         {screen === "pr" && (
-          <PRListPage repo={selectedRepo} onBack={handleBackToRepo} />
+          <PRListPage
+            repo={selectedRepo}
+            onBack={handleBackToRepo}
+            onSelectPR={handleViewPrDetail}
+          />
+        )}
+        {screen === "pr-detail" && (
+          <PullRequestDetailPage
+            pr={selectedPr}
+            onBack={() => setScreen("pr")}
+          />
         )}
       </Box>
     </ThemeProvider>
