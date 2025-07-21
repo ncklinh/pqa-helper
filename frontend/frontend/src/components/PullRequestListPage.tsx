@@ -1,5 +1,4 @@
-// src/components/PRListPage.tsx
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Avatar,
@@ -8,6 +7,8 @@ import {
   Paper,
   Stack,
   Button,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import { mockPRs, PullRequest } from "../mockData";
 import { exportPRsToCSV } from "../utils/exportCSV";
@@ -19,27 +20,84 @@ interface Props {
 }
 
 export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
-  const prs = mockPRs || [];
+  const [authorFilter, setAuthorFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
+  const authors = Array.from(new Set(mockPRs.map((pr) => pr.author)));
+  const statuses = Array.from(new Set(mockPRs.map((pr) => pr.status)));
+
+  const filteredPRs = mockPRs.filter((pr) => {
+    return (
+      (authorFilter ? pr.author === authorFilter : true) &&
+      (statusFilter ? pr.status === statusFilter : true)
+    );
+  });
 
   return (
     <Box flex={1} p={4}>
+      {/* Top Bar */}
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
+        flexWrap="wrap"
+        gap={2}
         mb={2}
       >
-        {/* Left: Title */}
-        <Typography variant="h4" fontWeight="bold">
+        <Typography variant="h5" fontWeight="bold">
           Pull Requests
         </Typography>
 
-        {/* Right: Buttons */}
-        <Box display="flex" gap={2}>
+        {/* Filters + Actions */}
+        <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
+          {/* Filters */}
+          <TextField
+            select
+            size="small"
+            label="Author"
+            value={authorFilter}
+            onChange={(e) => setAuthorFilter(e.target.value)}
+            placeholder="Select author"
+            sx={{ minWidth: 160 }}
+            slotProps={{
+              inputLabel: { sx: { fontSize: "0.85rem" } },
+              input: { sx: { fontSize: "0.85rem" } },
+            }}
+          >
+            <MenuItem value="">All</MenuItem>
+            {authors.map((author) => (
+              <MenuItem key={author} value={author}>
+                {author}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            select
+            size="small"
+            label="Status"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            placeholder="Select status"
+            sx={{ minWidth: 160 }}
+            slotProps={{
+              inputLabel: { sx: { fontSize: "0.85rem" } },
+              input: { sx: { fontSize: "0.85rem" } },
+            }}
+          >
+            <MenuItem value="">All</MenuItem>
+            {statuses.map((status) => (
+              <MenuItem key={status} value={status}>
+                {status}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          {/* Actions */}
           <Button
             variant="contained"
             color="primary"
-            onClick={() => exportPRsToCSV(repo, prs)}
+            onClick={() => exportPRsToCSV(repo, filteredPRs)}
           >
             Export CSV
           </Button>
@@ -49,7 +107,8 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
         </Box>
       </Box>
 
-      {prs.map((pr: PullRequest) => (
+      {/* PR list */}
+      {filteredPRs.map((pr: PullRequest) => (
         <Paper
           key={pr.id}
           variant="outlined"
@@ -61,12 +120,12 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
           }}
         >
           <Box display="flex" alignItems="center">
-            {/* Column 1: Author Avatar */}
+            {/* Author Avatar */}
             <Box width={80} display="flex" justifyContent="center">
               <Avatar src={pr.authorAvatar} alt={pr.author} />
             </Box>
 
-            {/* Column 2: Title + Metadata */}
+            {/* Title & Metadata */}
             <Box flex={1} textAlign="left">
               <Typography
                 variant="subtitle1"
@@ -80,18 +139,17 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
               </Typography>
             </Box>
 
-            {/* Column 3: Status */}
+            {/* Status */}
             <Box width={100} display="flex" justifyContent="center">
-              {/* <Chip label={pr.branch} variant="outlined" /> */}
               <Chip
-                label={pr?.status}
+                label={pr.status}
                 sx={{
                   backgroundColor:
-                    pr?.status === "OPEN"
+                    pr.status === "OPEN"
                       ? "#1976d2"
-                      : pr?.status === "DRAFT"
+                      : pr.status === "DRAFT"
                       ? "#9e9e9e"
-                      : pr?.status === "MERGED"
+                      : pr.status === "MERGED"
                       ? "green"
                       : undefined,
                   color: "white",
@@ -99,7 +157,7 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
               />
             </Box>
 
-            {/* Column 4: Reviewers */}
+            {/* Reviewers */}
             <Box width={150} display="flex" justifyContent="flex-start">
               <Stack direction="row" spacing={1}>
                 {pr.reviewers.map((r) => (

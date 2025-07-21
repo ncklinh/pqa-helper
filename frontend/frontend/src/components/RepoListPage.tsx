@@ -1,5 +1,5 @@
 // src/components/RepoListPage.tsx
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Typography,
   Table,
@@ -16,16 +16,26 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-} from '@mui/material';
-import { Repo, mockRepos } from '../mockData';
+  TextField, // 👈 Add this
+} from "@mui/material";
+import { Repo, mockRepos } from "../mockData";
 
 interface Props {
   onSelectRepo: (repoName: string) => void;
-  onLogout: () => void; // 👈 handle navigation back to login
+  onLogout: () => void;
 }
 
 export default function RepoListPage({ onSelectRepo, onLogout }: Props) {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredRepos = mockRepos.filter((repo: Repo) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      repo.name.toLowerCase().includes(term) ||
+      repo.description.toLowerCase().includes(term)
+    );
+  });
 
   const handleLogout = () => {
     setLogoutDialogOpen(true);
@@ -33,17 +43,46 @@ export default function RepoListPage({ onSelectRepo, onLogout }: Props) {
 
   const confirmLogout = () => {
     setLogoutDialogOpen(false);
-    onLogout(); // 👈 Navigate back to login
+    onLogout();
   };
 
   return (
     <Box flex={1} p={4}>
       {/* Header Row */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h4" fontWeight="bold">Repositories</Typography>
-        <Button variant="outlined" color="error" onClick={handleLogout}>
-          Log out
-        </Button>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+        flexWrap="wrap"
+        gap={2}
+      >
+        {/* Title */}
+        <Typography variant="h5" fontWeight="bold">
+          Repositories
+        </Typography>
+
+        {/* Search + Logout */}
+        <Box display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
+          <TextField
+            label="Search repositories"
+            size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by name or description"
+            sx={{ minWidth: 240 }}
+            InputLabelProps={{ sx: { fontSize: "0.9rem" } }}
+            inputProps={{ sx: { fontSize: "0.9rem" } }}
+          />
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleLogout}
+            sx={{ fontSize: "0.9rem", textTransform: "none" }}
+          >
+            Log out
+          </Button>
+        </Box>
       </Box>
 
       {/* Repo Table */}
@@ -51,26 +90,39 @@ export default function RepoListPage({ onSelectRepo, onLogout }: Props) {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell><strong>Repository</strong></TableCell>
-              <TableCell><strong>Last updated</strong></TableCell>
-              <TableCell><strong>Description</strong></TableCell>
+              <TableCell>
+                <strong>Repository</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Last updated</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Description</strong>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {mockRepos.map((repo: Repo) => (
+            {filteredRepos.map((repo: Repo) => (
               <TableRow
                 key={repo.name}
                 hover
-                sx={{ cursor: 'pointer' }}
+                sx={{ cursor: "pointer" }}
                 onClick={() => onSelectRepo(repo.name)}
               >
-                <TableCell sx={{ color: '#6750A4', fontWeight: 500 }}>
+                <TableCell sx={{ color: "#6750A4", fontWeight: 500 }}>
                   {repo.name}
                 </TableCell>
                 <TableCell>{repo.lastUpdated}</TableCell>
                 <TableCell>{repo.description}</TableCell>
               </TableRow>
             ))}
+            {filteredRepos.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  No repositories found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

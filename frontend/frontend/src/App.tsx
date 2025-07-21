@@ -1,10 +1,20 @@
 import { useState } from "react";
-import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
-import LoginForm from "./components/LoginForm";
+import {
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+  Box,
+  Button,
+  DialogContent,
+  Dialog,
+  DialogTitle,
+} from "@mui/material";
+import LoginPage from "./components/LoginPage";
 import RepoListPage from "./components/RepoListPage";
-import PRListPage from "./components/PRListPage";
+import PRListPage from "./components/PullRequestListPage";
 import PullRequestDetailPage from "./components/PullRequestDetailPage";
 import { PullRequest } from "./mockData";
+import { login } from "./api/auth";
 
 const theme = createTheme({
   palette: {
@@ -30,10 +40,8 @@ export default function App() {
   const [selectedRepo, setSelectedRepo] = useState("");
   const [selectedPr, setSelectedPr] = useState<PullRequest | null>(null);
 
-  const handleLogin = () => {
-    if (username && appPassword) {
-      setScreen("repo");
-    }
+  const handleLoginNavigate = () => {
+    setScreen("repo");
   };
 
   const handleBackToRepo = () => {
@@ -61,12 +69,12 @@ export default function App() {
         flexDirection="column"
       >
         {screen === "login" && (
-          <LoginForm
+          <LoginPage
             username={username}
             appPassword={appPassword}
             setUsername={setUsername}
             setAppPassword={setAppPassword}
-            onLogin={handleLogin}
+            onLoginNavigate={handleLoginNavigate}
           />
         )}
         {screen === "repo" && (

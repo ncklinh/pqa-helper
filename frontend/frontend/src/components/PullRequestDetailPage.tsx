@@ -21,14 +21,7 @@ export default function PullRequestDetailPage({
   onBack: () => void;
 }) {
   return (
-    <Box
-      p={{ xs: 2, sm: 3, md: 4 }}
-      sx={{
-        width: "100%",
-        maxWidth: "100%",
-        px: { xs: 2, md: 8, lg: 16 }, // Responsive horizontal padding
-      }}
-    >
+    <Box flex={1} p={4}>
       {" "}
       <Box
         display="flex"
@@ -59,7 +52,7 @@ export default function PullRequestDetailPage({
       </Typography>
       {/* Chips */}
       <Stack direction="row" spacing={2} my={1} alignItems="center">
-        <Typography variant="h5" fontWeight="bold" align="left">
+        <Typography variant="h6" fontWeight="bold" align="left">
           {`#${pr?.id} - ${pr?.title}`}
         </Typography>
         {""}
