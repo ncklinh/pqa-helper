@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { PullRequest } from "../mockData";
 import { exportPRDetailToCSV } from "../utils/exportCSV";
+import { formatToGMT7 } from "../utils/helper";
 
 export default function PullRequestDetailPage({
   pr,
@@ -47,36 +48,36 @@ export default function PullRequestDetailPage({
         </Box>
       </Box>
       {/* Path + Title */}
-      <Typography variant="body2" color="textSecondary" align="left">
+      {/* <Typography variant="body2" color="textSecondary" align="left">
         work-space / repo-name
-      </Typography>
+      </Typography> */}
       {/* Chips */}
       <Stack direction="row" spacing={2} my={1} alignItems="center">
         <Typography variant="h6" fontWeight="bold" align="left">
           {`#${pr?.id} - ${pr?.title}`}
         </Typography>
         {""}
-        <Chip label={pr?.branch} color="primary" />
+        {/* <Chip label={pr?.branch} color="primary" /> */}
         <Chip
-          label={pr?.status}
+          label={pr?.state}
           sx={{
             backgroundColor:
-              pr?.status === "OPEN"
+              pr?.state === "OPEN"
                 ? "#1976d2"
-                : pr?.status === "DRAFT"
+                : pr?.state === "DRAFT"
                 ? "#9e9e9e"
-                : pr?.status === "MERGED"
+                : pr?.state === "MERGED"
                 ? "green"
                 : undefined,
             color: "white",
           }}
         />
       </Stack>
-      <Box textAlign="left" flex={1}>
+      {/* <Box textAlign="left" flex={1}>
         <Typography variant="caption" color="textSecondary" align="left">
-          • Created {pr?.createdAt} • Last updated {pr?.updatedAt}
+          • Created {pr?.created_on} • Last updated {pr?.updated_on}
         </Typography>
-      </Box>
+      </Box> */}
       <Divider sx={{ my: 3 }} />
       {/* Description */}
       <Typography variant="h6" align="left">
@@ -89,30 +90,31 @@ export default function PullRequestDetailPage({
         Activity
       </Typography>
       <Box mt={2}>
-        {pr?.comments.map((comment, idx) => (
-          <Paper variant="outlined" sx={{ p: 2, mb: 2 }} key={idx}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar src={comment.avatar} />
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  align="left"
-                  sx={{ textAlign: "left" }}
-                >
-                  {comment.name}
-                </Typography>
+        {pr?.comments &&
+          pr?.comments.map((comment, idx) => (
+            <Paper variant="outlined" sx={{ p: 2, mb: 2 }} key={idx}>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Avatar src={comment.user.links.avatar.href} />
+                <Box>
+                  <Typography
+                    variant="subtitle2"
+                    align="left"
+                    sx={{ textAlign: "left" }}
+                  >
+                    {comment.user.display_name}
+                  </Typography>
 
-                <Typography
-                  variant="caption"
-                  color="textSecondary"
-                  align="left"
-                >
-                  {comment.time} • {comment.content}
-                </Typography>
-              </Box>
-            </Stack>
-          </Paper>
-        ))}
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    align="left"
+                  >
+                    {formatToGMT7(comment.created_on)} • {comment.content.raw}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Paper>
+          ))}
       </Box>
     </Box>
   );

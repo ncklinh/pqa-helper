@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const BASE_URL = "https://e6dbcc51766a.ngrok-free.app/bitbucket";
+const BASE_URL = "http://localhost:8080";
 
 export interface LoginPayload {
   username: string;
-  password: string;
+  app_password: string;
 }
 
 export interface LoginResponse {
@@ -27,14 +27,15 @@ const api = axios.create({
  */
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
   try {
-    const response = await api.post<LoginResponse>("/login", payload);
+    const response = await api.post<LoginResponse>("/bitbucket/login", payload);
 
     // Optionally save token to localStorage
     localStorage.setItem("token", response.data.token);
 
     return response.data;
   } catch (error: any) {
-    throw new Error(error?.response?.data?.message || "Login failed");
+    console.log(error);
+    throw new Error(error?.response?.data.error || "Login failed");
   }
 }
 

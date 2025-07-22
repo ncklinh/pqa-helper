@@ -31,9 +31,13 @@ export default function LoginPage({
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      // const data = await login({ username: username, password: appPassword });
-      onLoginNavigate();
+      const data = await login({
+        username: username,
+        app_password: appPassword,
+      });
+      if (data.token) onLoginNavigate();
     } catch (err: any) {
+      console.log(err);
       toast.error(err.message || "Login failed", {
         position: "bottom-right",
         theme: "colored",

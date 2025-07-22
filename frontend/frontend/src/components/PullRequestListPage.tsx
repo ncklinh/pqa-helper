@@ -10,26 +10,34 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-import { mockPRs, PullRequest } from "../mockData";
+import { PullRequest } from "../mockData";
 import { exportPRsToCSV } from "../utils/exportCSV";
 
 interface Props {
-  repo: string;
+  // workspaceName: string;
+  repoName: string;
+  prs: PullRequest[];
   onSelectPR(pr: PullRequest): void;
   onBack: () => void;
 }
 
-export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
-  const [authorFilter, setAuthorFilter] = useState("");
+export default function PRListPage({
+  // workspaceName,
+  repoName,
+  prs,
+  onSelectPR,
+  onBack,
+}: Props) {
+  // const [authorFilter, setAuthorFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  const authors = Array.from(new Set(mockPRs.map((pr) => pr.author)));
-  const statuses = Array.from(new Set(mockPRs.map((pr) => pr.status)));
+  // const authors = Array.from(new Set(prs.map((pr) => pr.author)));
+  const states = Array.from(new Set(prs.map((pr) => pr.state)));
 
-  const filteredPRs = mockPRs.filter((pr) => {
+  const filteredPRs = prs.filter((pr) => {
     return (
-      (authorFilter ? pr.author === authorFilter : true) &&
-      (statusFilter ? pr.status === statusFilter : true)
+      // (authorFilter ? pr.author === authorFilter : true) &&
+      statusFilter ? pr.state === statusFilter : true
     );
   });
 
@@ -51,7 +59,7 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
         {/* Filters + Actions */}
         <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
           {/* Filters */}
-          <TextField
+          {/* <TextField
             select
             size="small"
             label="Author"
@@ -70,7 +78,7 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
                 {author}
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
 
           <TextField
             select
@@ -86,7 +94,7 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
             }}
           >
             <MenuItem value="">All</MenuItem>
-            {statuses.map((status) => (
+            {states.map((status) => (
               <MenuItem key={status} value={status}>
                 {status}
               </MenuItem>
@@ -97,7 +105,7 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => exportPRsToCSV(repo, filteredPRs)}
+            onClick={() => exportPRsToCSV(repoName, filteredPRs)}
           >
             Export CSV
           </Button>
@@ -135,41 +143,47 @@ export default function PRListPage({ repo, onSelectPR, onBack }: Props) {
                 {`#${pr.id} - ${pr.title}`}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {`${pr.author} – last updated ${pr.updatedAt}`}
+                {pr.description}
+                {/* {`${pr.author} – last updated ${pr.updatedAt}`} */}
               </Typography>
             </Box>
 
             {/* Status */}
-            <Box width={100} display="flex" justifyContent="center">
-              <Chip
-                label={pr.status}
-                sx={{
-                  backgroundColor:
-                    pr.status === "OPEN"
-                      ? "#1976d2"
-                      : pr.status === "DRAFT"
-                      ? "#9e9e9e"
-                      : pr.status === "MERGED"
-                      ? "green"
-                      : undefined,
-                  color: "white",
-                }}
-              />
-            </Box>
+            {pr.state && (
+              <Box width={100} display="flex" justifyContent="center">
+                <Chip
+                  label={pr.state}
+                  sx={{
+                    backgroundColor:
+                      pr.state === "OPEN"
+                        ? "#1976d2"
+                        : pr.state === "DRAFT"
+                        ? "#9e9e9e"
+                        : pr.state === "MERGED"
+                        ? "green"
+                        : undefined,
+                    color: "white",
+                  }}
+                />
+              </Box>
+            )}
 
             {/* Reviewers */}
-            <Box width={150} display="flex" justifyContent="flex-start">
-              <Stack direction="row" spacing={1}>
-                {pr.reviewers.map((r) => (
-                  <Avatar
-                    key={r.name}
-                    src={r.avatar}
-                    alt={r.name}
-                    sx={{ width: 30, height: 30 }}
-                  />
-                ))}
-              </Stack>
-            </Box>
+            {pr.reviewers && (
+              <Box width={150} display="flex" justifyContent="flex-start">
+                <Stack direction="row" spacing={1}>
+                  {pr.reviewers &&
+                    pr.reviewers.map((r) => (
+                      <Avatar
+                        key={r.name}
+                        src={r.avatar}
+                        alt={r.name}
+                        sx={{ width: 30, height: 30 }}
+                      />
+                    ))}
+                </Stack>
+              </Box>
+            )}
           </Box>
         </Paper>
       ))}

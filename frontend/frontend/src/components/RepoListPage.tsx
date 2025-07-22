@@ -16,24 +16,38 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  TextField, // 👈 Add this
+  TextField,
+  MenuItem, // 👈 Add this
 } from "@mui/material";
 import { Repo, mockRepos } from "../mockData";
+import { getRepositories } from "../api/bitbucket";
 
 interface Props {
   onSelectRepo: (repoName: string) => void;
+  workspaces: string[];
+  repos: Repo[];
+  selectedWorkspace: string;
+  handleSelectWorkspace: (workspaceName: string) => void;
   onLogout: () => void;
 }
 
-export default function RepoListPage({ onSelectRepo, onLogout }: Props) {
+export default function RepoListPage({
+  onSelectRepo,
+  workspaces,
+  repos,
+  selectedWorkspace,
+  handleSelectWorkspace,
+  onLogout,
+}: Props) {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  // const [selectedWorkspace, setSelectedWorkspace] = useState("");
 
-  const filteredRepos = mockRepos.filter((repo: Repo) => {
-    const term = searchTerm.toLowerCase();
+  const filteredRepos = repos.filter((repo: Repo) => {
+    const term = searchTerm && searchTerm.toLowerCase();
     return (
-      repo.name.toLowerCase().includes(term) ||
-      repo.description.toLowerCase().includes(term)
+      (repo.name && repo.name.toLowerCase().includes(term)) ||
+      (repo.description && repo.description.toLowerCase().includes(term))
     );
   });
 
@@ -62,18 +76,49 @@ export default function RepoListPage({ onSelectRepo, onLogout }: Props) {
           Repositories
         </Typography>
 
-        {/* Search + Logout */}
+        {/*Selector + Search + Logout */}
         <Box display="flex" alignItems="center" gap={1.5} flexWrap="wrap">
+          {/* Workspace Selector */}
+          <TextField
+            select
+            size="small"
+            label="Workspace"
+            placeholder="Select workspace"
+            sx={{ minWidth: 200 }}
+            value={selectedWorkspace}
+            slotProps={{
+              inputLabel: { sx: { fontSize: "0.9rem" } },
+              input: { sx: { fontSize: "0.9rem" } },
+            }}
+            onChange={(e) => {
+              // const currentWorkspace = e.target.value;
+              handleSelectWorkspace(e.target.value);
+            }}
+          >
+            <MenuItem value="">Select</MenuItem>
+            {workspaces.map((ws) => (
+              <MenuItem key={ws} value={ws}>
+                {ws}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          {/* Search */}
           <TextField
             label="Search repositories"
             size="small"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              console.log(`e: ${e}`);
+              setSearchTerm(e.target.value);
+            }}
             placeholder="Search by name or description"
             sx={{ minWidth: 240 }}
             InputLabelProps={{ sx: { fontSize: "0.9rem" } }}
             inputProps={{ sx: { fontSize: "0.9rem" } }}
           />
+
+          {/* Logout Button */}
           <Button
             variant="outlined"
             color="error"
@@ -119,7 +164,7 @@ export default function RepoListPage({ onSelectRepo, onLogout }: Props) {
             {filteredRepos.length === 0 && (
               <TableRow>
                 <TableCell colSpan={3} align="center">
-                  No repositories found.
+                  Select a workspace to view repos
                 </TableCell>
               </TableRow>
             )}

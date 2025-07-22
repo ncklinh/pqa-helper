@@ -1,4 +1,5 @@
 import { PullRequest } from "../mockData";
+import { formatToGMT7 } from "./helper";
 
 export function exportPRsToCSV(repo: string, prs: PullRequest[]) {
   const rows = prs.map((pr) =>
@@ -7,7 +8,7 @@ export function exportPRsToCSV(repo: string, prs: PullRequest[]) {
       pr.title,
       pr.author,
       pr.branch,
-      pr.updatedAt,
+      // pr.updated_on,
       pr.reviewers.map((r) => r.name).join("; "),
     ].join(",")
   );
@@ -36,7 +37,11 @@ export function exportPRDetailToCSV(pr: PullRequest) {
 
   lines.push("Username,Comment,Time");
   const commentLines = pr.comments.map((comment) =>
-    [comment.name, comment.content, comment.time].join(",")
+    [
+      comment.user.display_name,
+      comment.content.raw,
+      formatToGMT7(comment.created_on),
+    ].join(",")
   );
   lines.push(...commentLines);
 

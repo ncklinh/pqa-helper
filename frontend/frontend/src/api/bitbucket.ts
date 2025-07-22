@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
-const BASE_URL = "https://ngrok-free.app/bitbucket";
+const BASE_URL = "http://localhost:8080/bitbuckets";
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -16,32 +16,34 @@ api.interceptors.request.use((config) => {
 
 // 1. Get all workspaces
 export async function getWorkspaces() {
-  const res = await api.get("/workspaces");
-  return res.data;
+  const res = await api.get("/api/workspace");
+  console.log(res.data);
+  return res.data.data;
 }
 
 // 2. Get repositories in a workspace
 export async function getRepositories(workspaceSlug: string) {
-  const res = await api.get(`/workspaces/${workspaceSlug}/repos`);
+  const res = await api.get(`/api/repos?workspace=${workspaceSlug}`);
+  console.log(res.data);
   return res.data;
 }
 
 // 3. Get PRs in a repository
 export async function getPullRequests(workspaceSlug: string, repoSlug: string) {
   const res = await api.get(
-    `/workspaces/${workspaceSlug}/repos/${repoSlug}/prs`
+    `/api/pullrequests?workspace=${workspaceSlug}&repo=${repoSlug}`
   );
   return res.data;
 }
 
 // 4. Get PR detail (and comments)
-export async function getPullRequestDetails(
+export async function getPRComments(
   workspaceSlug: string,
   repoSlug: string,
   prId: string
 ) {
   const res = await api.get(
-    `/workspaces/${workspaceSlug}/repos/${repoSlug}/prs/${prId}`
+    `/bitbucket/${workspaceSlug}/${repoSlug}/pullrequests/${prId}/comments`
   );
   return res.data;
 }
