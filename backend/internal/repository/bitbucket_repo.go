@@ -71,7 +71,7 @@ func (r *bitbucketRepo) GetRepositories(workspace string) ([]model.Repository, e
 }
 
 func (r *bitbucketRepo) GetPullRequests(workspace, repoSlug string) ([]model.PullRequest, error) {
-	url := fmt.Sprintf("%s/repositories/%s/%s/pullrequests", r.cfg.BaseURL, workspace, repoSlug)
+	url := fmt.Sprintf("%s/repositories/%s/%s/pullrequests?state=MERGED&state=DECLINED&state=SUPERSEDED&state=OPEN&state=DRAFT", r.cfg.BaseURL, workspace, repoSlug)
 	data, err := r.doRequest("GET", url)
 	if err != nil {
 		return nil, err
