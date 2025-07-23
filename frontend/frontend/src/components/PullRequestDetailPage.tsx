@@ -40,7 +40,7 @@ export default function PullRequestDetailPage({
             color="primary"
             onClick={() => pr && exportPRDetailToCSV(pr)}
           >
-            Export CSV
+            Export PR Comments
           </Button>
           <Button variant="outlined" onClick={onBack}>
             ← Back

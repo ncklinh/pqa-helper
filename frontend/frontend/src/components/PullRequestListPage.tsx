@@ -10,21 +10,21 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-import { PullRequest } from "../mockData";
-import { exportPRsToCSV } from "../utils/exportCSV";
+import { Comment, PullRequest } from "../mockData";
+import { exportAllCommentsToCSV, exportPRsToCSV } from "../utils/exportCSV";
 
 interface Props {
-  // workspaceName: string;
   repoName: string;
   prs: PullRequest[];
+  repoComments: Comment[];
   onSelectPR(pr: PullRequest): void;
   onBack: () => void;
 }
 
 export default function PRListPage({
-  // workspaceName,
   repoName,
   prs,
+  repoComments: repoComments,
   onSelectPR,
   onBack,
 }: Props) {
@@ -105,9 +105,9 @@ export default function PRListPage({
           <Button
             variant="contained"
             color="primary"
-            onClick={() => exportPRsToCSV(repoName, filteredPRs)}
+            onClick={() => exportAllCommentsToCSV(repoName, repoComments)}
           >
-            Export CSV
+            Export Repo Comments
           </Button>
           <Button variant="outlined" onClick={onBack}>
             ← Back

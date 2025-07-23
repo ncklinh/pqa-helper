@@ -76,6 +76,13 @@ export interface Comment {
     type: string;
   };
   created_on: string;
+  pullrequest: {
+    draft: boolean;
+    id: number;
+
+    title: string;
+    type: string;
+  };
 }
 
 // export const mockPRs: PullRequest[] = [

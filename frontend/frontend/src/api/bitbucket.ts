@@ -36,7 +36,7 @@ export async function getPullRequests(workspaceSlug: string, repoSlug: string) {
   return res.data;
 }
 
-// 4. Get PR detail (and comments)
+// 4. Get all comments from 1 PR
 export async function getPRComments(
   workspaceSlug: string,
   repoSlug: string,
@@ -45,5 +45,11 @@ export async function getPRComments(
   const res = await api.get(
     `/bitbucket/${workspaceSlug}/${repoSlug}/pullrequests/${prId}/comments`
   );
+  return res.data;
+}
+
+// 5. Get all comments from 1 repo
+export async function getRepoComments(workspaceSlug: string, repoSlug: string) {
+  const res = await api.get(`/bitbucket/${workspaceSlug}/${repoSlug}/comments`);
   return res.data;
 }

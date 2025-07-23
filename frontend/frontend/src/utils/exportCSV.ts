@@ -1,4 +1,4 @@
-import { PullRequest } from "../mockData";
+import { PullRequest, Comment } from "../mockData";
 import { formatToGMT7 } from "./helper";
 
 export function exportPRsToCSV(repo: string, prs: PullRequest[]) {
@@ -22,6 +22,38 @@ export function exportPRsToCSV(repo: string, prs: PullRequest[]) {
   const a = document.createElement("a");
   a.href = url;
   a.download = `${repo}-pull-requests.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function exportAllCommentsToCSV(repoName: String, comments: Comment[]) {
+  if (!comments) return;
+
+  const lines: string[] = [];
+
+  lines.push(`Repo: ${repoName},,`);
+  // lines.push(`Description: ${pr.description},,`);
+  // lines.push(",,");
+
+  lines.push("Username,Comment,Time,PR Type,PR");
+  const commentLines = comments.map((comment) =>
+    [
+      comment.user.display_name,
+      comment.content.raw,
+      formatToGMT7(comment.created_on),
+      comment.pullrequest.type,
+      comment.pullrequest.title,
+    ].join(",")
+  );
+  lines.push(...commentLines);
+
+  // Create and trigger CSV download
+  const csvContent = lines.join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${repoName}_detail.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }

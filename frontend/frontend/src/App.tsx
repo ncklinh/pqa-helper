@@ -19,6 +19,7 @@ import {
   getPullRequests,
   getPRComments,
   getRepositories,
+  getRepoComments,
 } from "./api/bitbucket";
 import { logout } from "./api/auth";
 
@@ -49,6 +50,7 @@ export default function App() {
   const [workspaces, setWorkspaces] = useState<string[]>([]);
   const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [repoComments, setRepoComments] = useState<Comment[]>([]);
   const [repos, setRepos] = useState<Repo[]>([]);
 
   const handleLoginNavigate = async () => {
@@ -75,6 +77,8 @@ export default function App() {
   const handleSelectRepo = async (repoName: string) => {
     const result = await getPullRequests(selectedWorkspace, repoName);
     setPullRequests(result);
+    const commentsFromRepo = await getRepoComments(selectedWorkspace, repoName);
+    setRepoComments(commentsFromRepo);
     // setSelectedWorkspace(workspaceName);
     setSelectedRepo(repoName);
     setScreen("pr");
@@ -128,6 +132,7 @@ export default function App() {
           <PRListPage
             repoName={selectedRepo}
             prs={pullRequests}
+            repoComments={repoComments}
             onBack={handleBackToRepo}
             onSelectPR={handleViewPrDetail}
           />
