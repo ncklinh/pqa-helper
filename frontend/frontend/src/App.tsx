@@ -1,14 +1,5 @@
 import { useState } from "react";
-import {
-  ThemeProvider,
-  createTheme,
-  CssBaseline,
-  Box,
-  Button,
-  DialogContent,
-  Dialog,
-  DialogTitle,
-} from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline, Box } from "@mui/material";
 import LoginPage from "./components/LoginPage";
 import RepoListPage from "./components/RepoListPage";
 import PRListPage from "./components/PullRequestListPage";
@@ -22,6 +13,7 @@ import {
   getRepoComments,
 } from "./api/bitbucket";
 import { logout } from "./api/auth";
+import { CircularProgress, Backdrop } from "@mui/material";
 
 const theme = createTheme({
   palette: {
@@ -52,6 +44,7 @@ export default function App() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [repoComments, setRepoComments] = useState<Comment[]>([]);
   const [repos, setRepos] = useState<Repo[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleLoginNavigate = async () => {
     const result = await getWorkspaces();
@@ -64,24 +57,43 @@ export default function App() {
     // setSelectedRepo("");
   };
   const handleSelectWorkspace = async (workspaceName: string) => {
-    setSelectedWorkspace(workspaceName);
+    setLoading(true);
 
-    if (workspaceName) {
-      const repos: Repo[] = await getRepositories(workspaceName); // 👈 use the argument, not stale state
-      setRepos(repos);
-    } else {
-      setRepos([]);
+    try {
+      setSelectedWorkspace(workspaceName);
+      if (workspaceName) {
+        const repos: Repo[] = await getRepositories(workspaceName);
+        setRepos(repos);
+      } else {
+        setRepos([]);
+      }
+    } catch (err) {
+      console.error("Error loading workspace data", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSelectRepo = async (repoName: string) => {
-    const result = await getPullRequests(selectedWorkspace, repoName);
-    setPullRequests(result);
-    const commentsFromRepo = await getRepoComments(selectedWorkspace, repoName);
-    setRepoComments(commentsFromRepo);
-    // setSelectedWorkspace(workspaceName);
-    setSelectedRepo(repoName);
-    setScreen("pr");
+    setLoading(true);
+
+    try {
+      const result = await getPullRequests(selectedWorkspace, repoName);
+      setPullRequests(result);
+
+      const commentsFromRepo = await getRepoComments(
+        selectedWorkspace,
+        repoName
+      );
+      setRepoComments(commentsFromRepo);
+
+      setSelectedRepo(repoName);
+      setScreen("pr");
+    } catch (err) {
+      console.error("Error loading repo data", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = () => {
@@ -119,15 +131,25 @@ export default function App() {
           />
         )}
         {screen === "repo" && (
-          <RepoListPage
-            onSelectRepo={handleSelectRepo}
-            workspaces={workspaces}
-            repos={repos}
-            selectedWorkspace={selectedWorkspace}
-            handleSelectWorkspace={handleSelectWorkspace}
-            onLogout={handleLogout}
-          />
-        )}{" "}
+          <>
+            {loading && (
+              <Backdrop
+                open={true}
+                sx={{ color: "#fff", zIndex: 9999, opacity: 0 }}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            )}
+            <RepoListPage
+              onSelectRepo={handleSelectRepo}
+              workspaces={workspaces}
+              repos={repos}
+              selectedWorkspace={selectedWorkspace}
+              handleSelectWorkspace={handleSelectWorkspace}
+              onLogout={handleLogout}
+            />
+          </>
+        )}
         {screen === "pr" && (
           <PRListPage
             repoName={selectedRepo}

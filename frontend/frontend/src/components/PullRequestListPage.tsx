@@ -9,6 +9,12 @@ import {
   Button,
   TextField,
   MenuItem,
+  TableContainer,
+  Table,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableBody,
 } from "@mui/material";
 import { Comment, PullRequest } from "../mockData";
 import { exportAllCommentsToCSV, exportPRsToCSV } from "../utils/exportCSV";
@@ -84,18 +90,21 @@ export default function PRListPage({
             select
             size="small"
             label="Status"
+            className="selector"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             placeholder="Select status"
-            sx={{ minWidth: 160 }}
+            sx={{ minWidth: 130 }}
             slotProps={{
-              inputLabel: { sx: { fontSize: "0.85rem" } },
-              input: { sx: { fontSize: "0.85rem" } },
+              inputLabel: { sx: { fontSize: "0.8rem" } },
+              input: { sx: { fontSize: "0.8rem" } },
             }}
           >
-            <MenuItem value="">All</MenuItem>
+            <MenuItem value="" sx={{ fontSize: "0.8rem" }}>
+              All
+            </MenuItem>
             {states.map((status) => (
-              <MenuItem key={status} value={status}>
+              <MenuItem key={status} value={status} sx={{ fontSize: "0.8rem" }}>
                 {status}
               </MenuItem>
             ))}
@@ -106,87 +115,130 @@ export default function PRListPage({
             variant="contained"
             color="primary"
             onClick={() => exportAllCommentsToCSV(repoName, repoComments)}
+            className="contained-button"
+            size="small"
           >
             Export Repo Comments
           </Button>
-          <Button variant="outlined" onClick={onBack}>
+          <Button
+            variant="outlined"
+            onClick={onBack}
+            className="outlined-button"
+            size="small"
+          >
             ← Back
           </Button>
         </Box>
       </Box>
 
-      {/* PR list */}
-      {filteredPRs.map((pr: PullRequest) => (
-        <Paper
-          key={pr.id}
-          variant="outlined"
-          onClick={() => onSelectPR(pr)}
-          sx={{
-            p: 2,
-            mb: 2,
-            "&:hover": { borderColor: "#6750A4" },
-          }}
-        >
-          <Box display="flex" alignItems="center">
-            {/* Author Avatar */}
-            <Box width={80} display="flex" justifyContent="center">
-              <Avatar src={pr.authorAvatar} alt={pr.author} />
-            </Box>
-
-            {/* Title & Metadata */}
-            <Box flex={1} textAlign="left">
-              <Typography
-                variant="subtitle1"
-                fontWeight="bold"
-                sx={{ color: "#6750A4" }}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell className="primary-text">
+                <strong>Summary</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Created</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Reviewers</strong>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredPRs.map((pr: PullRequest) => (
+              <TableRow
+                hover
+                sx={{ cursor: "pointer" }}
+                key={pr.id}
+                onClick={() => onSelectPR(pr)}
               >
-                {`#${pr.id} - ${pr.title}`}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {pr.description}
-                {/* {`${pr.author} – last updated ${pr.updatedAt}`} */}
-              </Typography>
-            </Box>
+                <TableCell sx={{ color: "#6750A4", fontWeight: 500 }}>
+                  <Box display="flex" alignItems="center">
+                    {/* Author Avatar */}
+                    <Box width={50}>
+                      <Avatar src={pr.authorAvatar} alt={pr.author} />
+                    </Box>
 
-            {/* Status */}
-            {pr.state && (
-              <Box width={100} display="flex" justifyContent="center">
-                <Chip
-                  label={pr.state}
-                  sx={{
-                    backgroundColor:
-                      pr.state === "OPEN"
-                        ? "#1976d2"
-                        : pr.state === "DRAFT"
-                        ? "#9e9e9e"
-                        : pr.state === "MERGED"
-                        ? "green"
-                        : undefined,
-                    color: "white",
-                  }}
-                />
-              </Box>
-            )}
+                    {/* Title & Metadata */}
+                    <Box flex={1} textAlign="left">
+                      <Box display={"flex"} alignItems="center" gap={0.3}>
+                        {/* Status */}
+                        {pr.state && (
+                          <Chip
+                            label={pr.state}
+                            sx={{
+                              backgroundColor:
+                                pr.state === "OPEN"
+                                  ? "#0C66E4"
+                                  : pr.state === "DRAFT"
+                                  ? "#44546F"
+                                  : pr.state === "MERGED"
+                                  ? "#1F845A"
+                                  : pr.state === "DECLINED"
+                                  ? "#C9372C"
+                                  : undefined,
+                              color: "white",
+                              padding: "0px",
+                              margin: "5px",
+                              minWidth: "unset",
+                              height: "20px",
+                              borderRadius: "5px",
+                            }}
+                          />
+                        )}{" "}
+                        <Typography
+                          variant="body2"
+                          fontWeight="bold"
+                          className="primary-text"
+                        >
+                          {`#${pr.id} - ${pr.title}`}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" className="primary-text">
+                        {pr.description}
+                        {/* {`${pr.author} – last updated ${pr.updatedAt}`} */}
+                      </Typography>
+                    </Box>
 
-            {/* Reviewers */}
-            {pr.reviewers && (
-              <Box width={150} display="flex" justifyContent="flex-start">
-                <Stack direction="row" spacing={1}>
-                  {pr.reviewers &&
-                    pr.reviewers.map((r) => (
-                      <Avatar
-                        key={r.name}
-                        src={r.avatar}
-                        alt={r.name}
-                        sx={{ width: 30, height: 30 }}
-                      />
-                    ))}
-                </Stack>
-              </Box>
-            )}
-          </Box>
-        </Paper>
-      ))}
+                    {/* Reviewers */}
+                    {pr.reviewers && (
+                      <Box
+                        width={150}
+                        display="flex"
+                        justifyContent="flex-start"
+                      >
+                        <Stack direction="row" spacing={1}>
+                          {pr.reviewers &&
+                            pr.reviewers.map((r) => (
+                              <Avatar
+                                key={r.name}
+                                src={r.avatar}
+                                alt={r.name}
+                                sx={{ width: 30, height: 30 }}
+                              />
+                            ))}
+                        </Stack>
+                      </Box>
+                    )}
+                  </Box>
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            ))}
+            {/* {filteredRepos.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  Select a workspace to view repos
+                </TableCell>
+              </TableRow>
+            )} */}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {/* PR list */}
     </Box>
   );
 }

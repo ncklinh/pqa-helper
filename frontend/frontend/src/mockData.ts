@@ -6,45 +6,6 @@ export interface Repo {
   description: string;
 }
 
-export const mockRepos: Repo[] = [
-  {
-    name: "client-portal-frontend",
-    lastUpdated: "2024-12-01",
-    description:
-      "React-based frontend for the Client Portal application with dashboard, billing, and messaging features.",
-  },
-  {
-    name: "inventory-api-service",
-    lastUpdated: "2025-01-14",
-    description:
-      "Node.js/Express backend for managing product inventory, suppliers, and stock tracking.",
-  },
-  {
-    name: "ecommerce-mobile-app",
-    lastUpdated: "2025-03-22",
-    description:
-      "Flutter-based mobile app for B2C e-commerce with cart, payment integration, and order history.",
-  },
-  {
-    name: "internal-timesheet-tool",
-    lastUpdated: "2025-04-03",
-    description:
-      "Company-internal tool for employees to log billable hours, sync with Jira, and export timesheets.",
-  },
-  {
-    name: "hr-onboarding-portal",
-    lastUpdated: "2025-05-27",
-    description:
-      "Web platform to manage new employee onboarding flows including document upload and training modules.",
-  },
-  {
-    name: "analytics-dashboard-backend",
-    lastUpdated: "2025-06-18",
-    description:
-      "Go-based API service that aggregates data and provides chart-ready analytics for client dashboards.",
-  },
-];
-
 export interface PullRequest {
   id: number;
   title: string;
@@ -84,6 +45,45 @@ export interface Comment {
     type: string;
   };
 }
+
+// export const mockRepos: Repo[] = [
+//   {
+//     name: "client-portal-frontend",
+//     lastUpdated: "2024-12-01",
+//     description:
+//       "React-based frontend for the Client Portal application with dashboard, billing, and messaging features.",
+//   },
+//   {
+//     name: "inventory-api-service",
+//     lastUpdated: "2025-01-14",
+//     description:
+//       "Node.js/Express backend for managing product inventory, suppliers, and stock tracking.",
+//   },
+//   {
+//     name: "ecommerce-mobile-app",
+//     lastUpdated: "2025-03-22",
+//     description:
+//       "Flutter-based mobile app for B2C e-commerce with cart, payment integration, and order history.",
+//   },
+//   {
+//     name: "internal-timesheet-tool",
+//     lastUpdated: "2025-04-03",
+//     description:
+//       "Company-internal tool for employees to log billable hours, sync with Jira, and export timesheets.",
+//   },
+//   {
+//     name: "hr-onboarding-portal",
+//     lastUpdated: "2025-05-27",
+//     description:
+//       "Web platform to manage new employee onboarding flows including document upload and training modules.",
+//   },
+//   {
+//     name: "analytics-dashboard-backend",
+//     lastUpdated: "2025-06-18",
+//     description:
+//       "Go-based API service that aggregates data and provides chart-ready analytics for client dashboards.",
+//   },
+// ];
 
 // export const mockPRs: PullRequest[] = [
 //   {

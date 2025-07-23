@@ -1,5 +1,5 @@
 html {
-  background-color: rgba(27, 38, 54, 1);
+  background-color: white;
   text-align: center;
   color: white;
 }
@@ -41,4 +41,55 @@ body {
   width: 300px;
   border-radius: 8px;
   text-align: center;
+}
+
+.primary-text {
+  color: #172b4d;
+  font-size: 14px;
+}
+
+.contained-button {
+  background-color: #172b4d !important;
+  color: white !important;
+  min-width: auto;
+  padding: 4px 10px;
+  text-transform: none;
+}
+
+.outlined-button {
+  border: 1px solid #172b4d !important;
+  color: #172b4d !important;
+  min-width: auto;
+  padding: 4px 10px;
+  text-transform: none;
+}
+.selector {
+  min-width: 130px;
+  font-size: 0.8rem;
+}
+
+.selector .MuiOutlinedInput-root {
+  border-radius: 4px;
+  height: 32px; /* Match button height */
+  font-size: 0.8rem;
+}
+
+.selector .MuiOutlinedInput-notchedOutline {
+  border-color: #172b4d;
+}
+
+.selector .Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #172b4d;
+}
+
+.selector .MuiInputLabel-root {
+  font-size: 0.8rem;
+}
+
+.selector .MuiSelect-select {
+  padding: 8px 12px;
+}
+
+.selector .MuiMenuItem-root {
+  font-size: 0.8rem;
 }

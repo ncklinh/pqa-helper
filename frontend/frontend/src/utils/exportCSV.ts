@@ -1,5 +1,5 @@
 import { PullRequest, Comment } from "../mockData";
-import { formatToGMT7 } from "./helper";
+import { formatDate } from "./helper";
 
 export function exportPRsToCSV(repo: string, prs: PullRequest[]) {
   const rows = prs.map((pr) =>
@@ -40,7 +40,7 @@ export function exportAllCommentsToCSV(repoName: String, comments: Comment[]) {
     [
       comment.user.display_name,
       comment.content.raw,
-      formatToGMT7(comment.created_on),
+      formatDate(comment.created_on),
       comment.pullrequest.type,
       comment.pullrequest.title,
     ].join(",")
@@ -72,7 +72,7 @@ export function exportPRDetailToCSV(pr: PullRequest) {
     [
       comment.user.display_name,
       comment.content.raw,
-      formatToGMT7(comment.created_on),
+      formatDate(comment.created_on),
     ].join(",")
   );
   lines.push(...commentLines);

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { PullRequest } from "../mockData";
 import { exportPRDetailToCSV } from "../utils/exportCSV";
-import { formatToGMT7 } from "../utils/helper";
+import { formatDate } from "../utils/helper";
 
 export default function PullRequestDetailPage({
   pr,
@@ -31,7 +31,7 @@ export default function PullRequestDetailPage({
         mb={2}
       >
         {/* Left: Title */}
-        <Typography variant="h4" fontWeight="bold"></Typography>
+        <Typography variant="h6" fontWeight="bold"></Typography>
 
         {/* Right: Buttons */}
         <Box display="flex" gap={2}>
@@ -39,10 +39,17 @@ export default function PullRequestDetailPage({
             variant="contained"
             color="primary"
             onClick={() => pr && exportPRDetailToCSV(pr)}
+            className="contained-button"
+            size="small"
           >
             Export PR Comments
           </Button>
-          <Button variant="outlined" onClick={onBack}>
+          <Button
+            variant="outlined"
+            onClick={onBack}
+            className="outlined-button"
+            size="small"
+          >
             ← Back
           </Button>
         </Box>
@@ -53,7 +60,7 @@ export default function PullRequestDetailPage({
       </Typography> */}
       {/* Chips */}
       <Stack direction="row" spacing={2} my={1} alignItems="center">
-        <Typography variant="h6" fontWeight="bold" align="left">
+        <Typography variant="body1" fontWeight="bold" align="left">
           {`#${pr?.id} - ${pr?.title}`}
         </Typography>
         {""}
@@ -70,6 +77,7 @@ export default function PullRequestDetailPage({
                 ? "green"
                 : undefined,
             color: "white",
+            padding: "5px",
           }}
         />
       </Stack>
@@ -80,13 +88,15 @@ export default function PullRequestDetailPage({
       </Box> */}
       <Divider sx={{ my: 3 }} />
       {/* Description */}
-      <Typography variant="h6" align="left">
+      <Typography variant="body2" fontWeight="bold" align="left">
         Description
       </Typography>
-      <Typography align="left">{pr?.description}</Typography>
+      <Typography variant="body2" align="left">
+        {pr?.description}
+      </Typography>
       <Divider sx={{ my: 3 }} />
       {/* Activity */}
-      <Typography variant="h6" align="left">
+      <Typography variant="body2" fontWeight="bold" align="left">
         Activity
       </Typography>
       <Box mt={2}>
@@ -101,7 +111,11 @@ export default function PullRequestDetailPage({
                     align="left"
                     sx={{ textAlign: "left" }}
                   >
-                    {comment.user.display_name}
+                    {" "}
+                    <span style={{ fontSize: "0.8rem" }}>
+                      <strong>{comment.user.display_name}</strong>{" "}
+                      {formatDate(comment.created_on)}
+                    </span>
                   </Typography>
 
                   <Typography
@@ -109,7 +123,7 @@ export default function PullRequestDetailPage({
                     color="textSecondary"
                     align="left"
                   >
-                    {formatToGMT7(comment.created_on)} • {comment.content.raw}
+                    {comment.content.raw}
                   </Typography>
                 </Box>
               </Stack>

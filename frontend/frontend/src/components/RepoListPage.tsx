@@ -19,8 +19,7 @@ import {
   TextField,
   MenuItem, // 👈 Add this
 } from "@mui/material";
-import { Repo, mockRepos } from "../mockData";
-import { getRepositories } from "../api/bitbucket";
+import { Repo } from "../mockData";
 
 interface Props {
   onSelectRepo: (repoName: string) => void;
@@ -84,20 +83,23 @@ export default function RepoListPage({
             size="small"
             label="Workspace"
             placeholder="Select workspace"
-            sx={{ minWidth: 200 }}
+            className="selector"
+            sx={{ minWidth: 160 }}
             value={selectedWorkspace}
             slotProps={{
-              inputLabel: { sx: { fontSize: "0.9rem" } },
-              input: { sx: { fontSize: "0.9rem" } },
+              inputLabel: { sx: { fontSize: "0.8rem" } },
+              input: { sx: { fontSize: "0.8rem" } },
             }}
             onChange={(e) => {
               // const currentWorkspace = e.target.value;
               handleSelectWorkspace(e.target.value);
             }}
           >
-            <MenuItem value="">Select</MenuItem>
+            <MenuItem value="" sx={{ fontSize: "0.8rem" }}>
+              Select
+            </MenuItem>
             {workspaces.map((ws) => (
-              <MenuItem key={ws} value={ws}>
+              <MenuItem key={ws} value={ws} sx={{ fontSize: "0.8rem" }}>
                 {ws}
               </MenuItem>
             ))}
@@ -114,8 +116,10 @@ export default function RepoListPage({
             }}
             placeholder="Search by name or description"
             sx={{ minWidth: 240 }}
-            InputLabelProps={{ sx: { fontSize: "0.9rem" } }}
-            inputProps={{ sx: { fontSize: "0.9rem" } }}
+            slotProps={{
+              inputLabel: { sx: { fontSize: "0.75rem" } },
+              input: { sx: { fontSize: "0.75rem" } },
+            }}
           />
 
           {/* Logout Button */}
@@ -123,7 +127,8 @@ export default function RepoListPage({
             variant="outlined"
             color="error"
             onClick={handleLogout}
-            sx={{ fontSize: "0.9rem", textTransform: "none" }}
+            className="outlined-button"
+            size="small"
           >
             Log out
           </Button>
@@ -155,7 +160,9 @@ export default function RepoListPage({
                 onClick={() => onSelectRepo(repo.name)}
               >
                 <TableCell sx={{ color: "#6750A4", fontWeight: 500 }}>
-                  {repo.name}
+                  <Typography variant="body2" className="primary-text">
+                    {repo.name}
+                  </Typography>
                 </TableCell>
                 <TableCell>{repo.lastUpdated}</TableCell>
                 <TableCell>{repo.description}</TableCell>
@@ -180,7 +187,7 @@ export default function RepoListPage({
         <DialogTitle>Confirm Logout</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to log out and return to the login screen?
+            Are you sure you want to log out?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
