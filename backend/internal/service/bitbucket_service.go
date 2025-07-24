@@ -8,7 +8,7 @@ import (
 type BitbucketService interface {
 	ListRepositories(workspace string) ([]model.Repository, error)
 	ListPullRequests(workspace, repoSlug string) ([]model.PullRequest, error)
-	GetAllWorkspaces() ([]string, error)
+	GetAllWorkspaces() ([]model.Workspace, error)
 	GetPRComments(workspace, repoSlug, pullRequestID string) ([]map[string]interface{}, error)
 	GetRepoComments(workspace, repoSlug string) ([]map[string]interface{}, error)
 }
@@ -29,7 +29,7 @@ func (s *bitbucketService) ListPullRequests(workspace, repoSlug string) ([]model
 	return s.repo.GetPullRequests(workspace, repoSlug)
 }
 
-func (s *bitbucketService) GetAllWorkspaces() ([]string, error) {
+func (s *bitbucketService) GetAllWorkspaces() ([]model.Workspace, error) {
 	return s.repo.GetWorkspaces()
 }
 

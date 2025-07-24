@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 )
@@ -14,7 +13,7 @@ import (
 type BitbucketRepository interface {
 	GetRepositories(workspace string) ([]model.Repository, error)
 	GetPullRequests(workspace, repoSlug string) ([]model.PullRequest, error)
-	GetWorkspaces() ([]string, error)
+	GetWorkspaces() ([]model.Workspace, error)
 	GetPRComments(workspace, repoSlug, pullRequestID string) ([]map[string]interface{}, error)
 	GetRepoComments(workspace, repoSlug string) ([]map[string]interface{}, error)
 }
@@ -84,44 +83,56 @@ func (r *bitbucketRepo) GetPullRequests(workspace, repoSlug string) ([]model.Pul
 	return res.Values, nil
 }
 
-func (r *bitbucketRepo) GetWorkspaces() ([]string, error) {
-	url := "https://api.bitbucket.org/2.0/workspaces"
-	req, err := http.NewRequest("GET", url, nil)
+func (r *bitbucketRepo) GetWorkspaces() ([]model.Workspace, error) {
+	url := fmt.Sprintf("%s/workspaces", r.cfg.BaseURL)
+	data, err := r.doRequest("GET", url)
+
 	if err != nil {
 		return nil, err
 	}
-	req.SetBasicAuth(r.cfg.Username, r.cfg.AppPassword)
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
+	// url := "https://api.bitbucket.org/2.0/workspaces"
+	// req, err := http.NewRequest("GET", url, nil)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// req.SetBasicAuth(r.cfg.Username, r.cfg.AppPassword)
+
+	// client := &http.Client{}
+	// resp, err := client.Do(req)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer resp.Body.Close()
+
+	// if resp.StatusCode != http.StatusOK {
+	// 	return nil, fmt.Errorf("failed to fetch workspaces: %v", resp.Status)
+	// }
+
+	// body, _ := ioutil.ReadAll(resp.Body)
+
+	// var values []string
+
+	// if resp.StatusCode == 200 {
+	// 	var result map[string]interface{}
+	// 	json.Unmarshal(body, &result)
+	// 	for _, w := range result["values"].([]interface{}) {
+	// 		workspace := w.(map[string]interface{})
+	// 		fmt.Printf("Workspace: %s (%s)\n", workspace["name"], workspace["slug"])
+	// 		nameWorkSpace, err := workspace["name"].(string)
+	// 		fmt.Println("err: ", err)
+	// 		values = append(values, nameWorkSpace)
+	// 	}
+	// } else {
+	// 	fmt.Println("Body: ", values, " and: ", err)
+	// }
+
+	var res model.WorkspaceListResponse
+	if err := json.Unmarshal(data, &res); err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch workspaces: %v", resp.Status)
-	}
-
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	var values []string
-
-	if resp.StatusCode == 200 {
-		var result map[string]interface{}
-		json.Unmarshal(body, &result)
-		for _, w := range result["values"].([]interface{}) {
-			workspace := w.(map[string]interface{})
-			fmt.Printf("Workspace: %s (%s)\n", workspace["name"], workspace["slug"])
-			nameWorkSpace, err := workspace["name"].(string)
-			fmt.Println("err: ", err)
-			values = append(values, nameWorkSpace)
-		}
-	} else {
-		fmt.Println("Body: ", values, " and: ", err)
-	}
-
-	return values, nil
+	return res.Values, nil
 }
 
 func (r *bitbucketRepo) GetPRComments(workspace, repoSlug, pullRequestID string) ([]map[string]interface{}, error) {
