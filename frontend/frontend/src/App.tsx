@@ -4,7 +4,7 @@ import LoginPage from "./components/LoginPage";
 import RepoListPage from "./components/RepoListPage";
 import PRListPage from "./components/PullRequestListPage";
 import PullRequestDetailPage from "./components/PullRequestDetailPage";
-import { PullRequest, Comment, Repo } from "./mockData";
+import { PullRequest, Comment, Repo, WorkSpace } from "./mockData";
 import {
   getWorkspaces,
   getPullRequests,
@@ -39,7 +39,7 @@ export default function App() {
   const [selectedRepo, setSelectedRepo] = useState("");
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
   const [selectedPr, setSelectedPr] = useState<PullRequest | null>(null);
-  const [workspaces, setWorkspaces] = useState<string[]>([]);
+  const [workspaces, setWorkspaces] = useState<WorkSpace[]>([]);
   const [pullRequests, setPullRequests] = useState<PullRequest[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [repoComments, setRepoComments] = useState<Comment[]>([]);

@@ -1,18 +1,10 @@
 // src/pages/PullRequestDetailPage.tsx
 
-import {
-  Box,
-  Typography,
-  Chip,
-  Divider,
-  Paper,
-  Avatar,
-  Stack,
-  Button,
-} from "@mui/material";
+import { Box, Typography, Divider, Avatar, Stack, Button } from "@mui/material";
 import { PullRequest } from "../mockData";
 import { exportPRDetailToCSV } from "../utils/exportCSV";
 import { formatDate } from "../utils/helper";
+import { PRStateChip, PRBranchChip } from "./UiComponents";
 
 export default function PullRequestDetailPage({
   pr,
@@ -60,27 +52,49 @@ export default function PullRequestDetailPage({
       </Typography> */}
       {/* Chips */}
       <Stack direction="row" spacing={2} my={1} alignItems="center">
-        <Typography variant="body1" fontWeight="bold" align="left">
-          {`#${pr?.id} - ${pr?.title}`}
+        <Typography
+          variant="h6"
+          fontWeight="bold"
+          align="left"
+          className="primary-text"
+        >
+          {pr?.title}
         </Typography>
         {""}
         {/* <Chip label={pr?.branch} color="primary" /> */}
-        <Chip
-          label={pr?.state}
-          sx={{
-            backgroundColor:
-              pr?.state === "OPEN"
-                ? "#1976d2"
-                : pr?.state === "DRAFT"
-                ? "#9e9e9e"
-                : pr?.state === "MERGED"
-                ? "green"
-                : undefined,
-            color: "white",
-            padding: "5px",
-          }}
-        />
+        {/* {pr?.state && <PRStateChip state={pr?.state} />}{" "} */}
       </Stack>
+      <Box display="flex" alignItems="center">
+        {/* Author Avatar */}
+        <Box width={45}>
+          <Avatar src={pr?.authorAvatar} sx={{ width: 36, height: 36 }} />
+        </Box>
+
+        {/* Title & Metadata */}
+        <Box
+          flex={1}
+          textAlign="left"
+          sx={{ margin: "2px 5px" }}
+          // gap={0.8}
+        >
+          <Box display={"flex"} alignItems="center" gap={0.8}>
+            {/* Status */}
+            {pr?.source.branch.name && (
+              <PRBranchChip state={pr?.source.branch.name} />
+            )}{" "}
+            {pr?.destination.branch.name && (
+              <PRBranchChip state={pr?.destination.branch.name} />
+            )}{" "}
+            {pr?.state && <PRStateChip state={pr?.state} />}{" "}
+          </Box>
+          <Typography variant="caption" className="secondary-text">
+            {pr &&
+              `${pr?.author.display_name} #${pr?.id} • Created ${formatDate(
+                pr.created_on
+              )} • Last updated ${formatDate(pr.updated_on)}`}
+          </Typography>
+        </Box>
+      </Box>
       {/* <Box textAlign="left" flex={1}>
         <Typography variant="caption" color="textSecondary" align="left">
           • Created {pr?.created_on} • Last updated {pr?.updated_on}
@@ -88,10 +102,15 @@ export default function PullRequestDetailPage({
       </Box> */}
       <Divider sx={{ my: 3 }} />
       {/* Description */}
-      <Typography variant="body2" fontWeight="bold" align="left">
+      <Typography
+        variant="body2"
+        fontWeight="bold"
+        align="left"
+        className="primary-text"
+      >
         Description
       </Typography>
-      <Typography variant="body2" align="left">
+      <Typography variant="body2" align="left" className="primary-text">
         {pr?.description}
       </Typography>
       <Divider sx={{ my: 3 }} />
@@ -102,32 +121,42 @@ export default function PullRequestDetailPage({
       <Box mt={2}>
         {pr?.comments &&
           pr?.comments.map((comment, idx) => (
-            <Paper variant="outlined" sx={{ p: 2, mb: 2 }} key={idx}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Avatar src={comment.user.links.avatar.href} />
-                <Box>
-                  <Typography
-                    variant="subtitle2"
-                    align="left"
-                    sx={{ textAlign: "left" }}
-                  >
-                    {" "}
-                    <span style={{ fontSize: "0.8rem" }}>
-                      <strong>{comment.user.display_name}</strong>{" "}
-                      {formatDate(comment.created_on)}
-                    </span>
-                  </Typography>
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="top"
+              key={idx}
+              className="comment-stack"
+            >
+              <Box width={40}>
+                <Avatar
+                  src={comment.user.links.avatar.href}
+                  sx={{ width: 36, height: 36 }}
+                />
+              </Box>
+              <Box>
+                <Typography
+                  variant="subtitle2"
+                  className="primary-text"
+                  align="left"
+                  sx={{ textAlign: "left" }}
+                >
+                  {" "}
+                  <span style={{ fontSize: "0.9rem" }}>
+                    <strong>{comment.user.display_name}</strong>{" "}
+                    {formatDate(comment.created_on)}
+                  </span>
+                </Typography>
 
-                  <Typography
-                    variant="caption"
-                    color="textSecondary"
-                    align="left"
-                  >
-                    {comment.content.raw}
-                  </Typography>
-                </Box>
-              </Stack>
-            </Paper>
+                <Typography
+                  variant="caption"
+                  className="secondary-text"
+                  align="left"
+                >
+                  {comment.content.raw}
+                </Typography>
+              </Box>
+            </Stack>
           ))}
       </Box>
     </Box>

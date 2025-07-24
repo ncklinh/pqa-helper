@@ -19,11 +19,12 @@ import {
   TextField,
   MenuItem, // 👈 Add this
 } from "@mui/material";
-import { Repo } from "../mockData";
+import { Repo, WorkSpace } from "../mockData";
+import { formatDate } from "../utils/helper";
 
 interface Props {
   onSelectRepo: (repoName: string) => void;
-  workspaces: string[];
+  workspaces: WorkSpace[];
   repos: Repo[];
   selectedWorkspace: string;
   handleSelectWorkspace: (workspaceName: string) => void;
@@ -71,7 +72,7 @@ export default function RepoListPage({
         gap={2}
       >
         {/* Title */}
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant="h6" fontWeight="bold">
           Repositories
         </Typography>
 
@@ -86,21 +87,21 @@ export default function RepoListPage({
             className="selector"
             sx={{ minWidth: 160 }}
             value={selectedWorkspace}
-            slotProps={{
-              inputLabel: { sx: { fontSize: "0.8rem" } },
-              input: { sx: { fontSize: "0.8rem" } },
-            }}
             onChange={(e) => {
               // const currentWorkspace = e.target.value;
               handleSelectWorkspace(e.target.value);
             }}
           >
-            <MenuItem value="" sx={{ fontSize: "0.8rem" }}>
+            <MenuItem value="" sx={{ fontSize: "0.9rem" }}>
               Select
             </MenuItem>
             {workspaces.map((ws) => (
-              <MenuItem key={ws} value={ws} sx={{ fontSize: "0.8rem" }}>
-                {ws}
+              <MenuItem
+                key={ws.uuid}
+                value={ws.name}
+                sx={{ fontSize: "0.9rem" }}
+              >
+                {ws.name}
               </MenuItem>
             ))}
           </TextField>
@@ -117,8 +118,8 @@ export default function RepoListPage({
             placeholder="Search by name or description"
             sx={{ minWidth: 240 }}
             slotProps={{
-              inputLabel: { sx: { fontSize: "0.75rem" } },
-              input: { sx: { fontSize: "0.75rem" } },
+              inputLabel: { sx: { fontSize: "0.85rem" } },
+              input: { sx: { fontSize: "0.8rem" } },
             }}
           />
 
@@ -140,13 +141,13 @@ export default function RepoListPage({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell className="primary-text table-cell">
                 <strong>Repository</strong>
               </TableCell>
-              <TableCell>
+              <TableCell className="primary-text table-cell">
                 <strong>Last updated</strong>
               </TableCell>
-              <TableCell>
+              <TableCell className="primary-text table-cell">
                 <strong>Description</strong>
               </TableCell>
             </TableRow>
@@ -159,13 +160,18 @@ export default function RepoListPage({
                 sx={{ cursor: "pointer" }}
                 onClick={() => onSelectRepo(repo.name)}
               >
-                <TableCell sx={{ color: "#6750A4", fontWeight: 500 }}>
+                <TableCell
+                  sx={{ color: "#6750A4", fontWeight: 500 }}
+                  className="table-cell"
+                >
                   <Typography variant="body2" className="primary-text">
                     {repo.name}
                   </Typography>
                 </TableCell>
-                <TableCell>{repo.lastUpdated}</TableCell>
-                <TableCell>{repo.description}</TableCell>
+                <TableCell className="table-cell">
+                  {formatDate(repo.updated_on)}
+                </TableCell>
+                <TableCell className="table-cell">{repo.description}</TableCell>
               </TableRow>
             ))}
             {filteredRepos.length === 0 && (

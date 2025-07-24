@@ -2,21 +2,42 @@
 
 export interface Repo {
   name: string;
-  lastUpdated: string;
+  updated_on: string;
+  created_on: string;
   description: string;
+}
+
+export interface WorkSpace {
+  uuid: string;
+  name: string;
+  slug: string;
+  is_private: boolean;
+  type: string;
+  created_on: string;
+  links: { avatar: { href: string } };
 }
 
 export interface PullRequest {
   id: number;
   title: string;
-  author: string;
+  author: { display_name: string };
   authorAvatar: string;
   branch: string;
   state: string;
-  // updated_on: string;
-  // created_on: string;
+  updated_on: string;
+  created_on: string;
   description: string;
   reviewers: { name: string; avatar: string }[];
+  source: {
+    branch: {
+      name: string;
+    };
+  };
+  destination: {
+    branch: {
+      name: string;
+    };
+  };
   comments: Comment[];
 }
 

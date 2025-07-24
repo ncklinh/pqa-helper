@@ -55,12 +55,14 @@ export default function LoginPage({
       minHeight="100vh"
       justifyContent="center"
     >
-      <Paper elevation={3} sx={{ p: 4, width: 300 }}>
-        <Typography variant="h5" fontWeight="bold" align="center" gutterBottom>
+      <Paper elevation={3} sx={{ p: 3, width: 300 }}>
+        <Typography variant="h6" fontWeight="bold" align="center" gutterBottom>
           PQA Helper
         </Typography>
         <TextField
           fullWidth
+          className="textfield"
+          size="small"
           label="Username"
           variant="outlined"
           margin="normal"
@@ -69,6 +71,8 @@ export default function LoginPage({
         />
         <TextField
           fullWidth
+          size="small"
+          className="textfield"
           label="App Password"
           type="password"
           variant="outlined"
@@ -78,7 +82,7 @@ export default function LoginPage({
         />
         <Button
           fullWidth
-          variant="contained"
+          className="contained-button"
           sx={{ mt: 2 }}
           onClick={handleLogin}
           disabled={isLoading}

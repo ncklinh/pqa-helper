@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import { Comment, PullRequest } from "../mockData";
 import { exportAllCommentsToCSV, exportPRsToCSV } from "../utils/exportCSV";
+import { formatDate } from "../utils/helper";
+import { PRStateChip } from "./UiComponents";
 
 interface Props {
   repoName: string;
@@ -58,7 +60,7 @@ export default function PRListPage({
         gap={2}
         mb={2}
       >
-        <Typography variant="h5" fontWeight="bold">
+        <Typography variant="h6" fontWeight="bold">
           Pull Requests
         </Typography>
 
@@ -135,13 +137,13 @@ export default function PRListPage({
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className="primary-text">
+              <TableCell className="primary-text table-cell">
                 <strong>Summary</strong>
               </TableCell>
-              <TableCell>
+              <TableCell className="primary-text table-cell">
                 <strong>Created</strong>
               </TableCell>
-              <TableCell>
+              <TableCell className="primary-text table-cell">
                 <strong>Reviewers</strong>
               </TableCell>
             </TableRow>
@@ -154,78 +156,63 @@ export default function PRListPage({
                 key={pr.id}
                 onClick={() => onSelectPR(pr)}
               >
-                <TableCell sx={{ color: "#6750A4", fontWeight: 500 }}>
+                <TableCell
+                  className="table-cell"
+                  sx={{ color: "#6750A4", fontWeight: 500 }}
+                >
                   <Box display="flex" alignItems="center">
                     {/* Author Avatar */}
-                    <Box width={50}>
-                      <Avatar src={pr.authorAvatar} alt={pr.author} />
+                    <Box width={45}>
+                      <Avatar
+                        src={pr.authorAvatar}
+                        sx={{ width: 36, height: 36 }}
+                      />
                     </Box>
 
                     {/* Title & Metadata */}
-                    <Box flex={1} textAlign="left">
-                      <Box display={"flex"} alignItems="center" gap={0.3}>
+                    <Box
+                      flex={1}
+                      textAlign="left"
+                      sx={{ margin: "2px 5px" }}
+                      // gap={0.8}
+                    >
+                      <Box display={"flex"} alignItems="center" gap={0.8}>
                         {/* Status */}
-                        {pr.state && (
-                          <Chip
-                            label={pr.state}
-                            sx={{
-                              backgroundColor:
-                                pr.state === "OPEN"
-                                  ? "#0C66E4"
-                                  : pr.state === "DRAFT"
-                                  ? "#44546F"
-                                  : pr.state === "MERGED"
-                                  ? "#1F845A"
-                                  : pr.state === "DECLINED"
-                                  ? "#C9372C"
-                                  : undefined,
-                              color: "white",
-                              padding: "0px",
-                              margin: "5px",
-                              minWidth: "unset",
-                              height: "20px",
-                              borderRadius: "5px",
-                            }}
-                          />
-                        )}{" "}
-                        <Typography
-                          variant="body2"
-                          fontWeight="bold"
-                          className="primary-text"
-                        >
-                          {`#${pr.id} - ${pr.title}`}
+                        {pr.state && <PRStateChip state={pr.state} />}{" "}
+                        <Typography variant="body2" className="primary-text">
+                          {pr.title}
                         </Typography>
                       </Box>
-                      <Typography variant="body2" className="primary-text">
-                        {pr.description}
-                        {/* {`${pr.author} – last updated ${pr.updatedAt}`} */}
+                      <Typography variant="caption" className="secondary-text">
+                        {`${pr.author.display_name} #${
+                          pr.id
+                        }, updated ${formatDate(pr.updated_on)}`}
                       </Typography>
                     </Box>
-
-                    {/* Reviewers */}
-                    {pr.reviewers && (
-                      <Box
-                        width={150}
-                        display="flex"
-                        justifyContent="flex-start"
-                      >
-                        <Stack direction="row" spacing={1}>
-                          {pr.reviewers &&
-                            pr.reviewers.map((r) => (
-                              <Avatar
-                                key={r.name}
-                                src={r.avatar}
-                                alt={r.name}
-                                sx={{ width: 30, height: 30 }}
-                              />
-                            ))}
-                        </Stack>
-                      </Box>
-                    )}
                   </Box>
                 </TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
+                <TableCell className="table-cell">
+                  {" "}
+                  {formatDate(pr.updated_on)}
+                </TableCell>
+                <TableCell className="table-cell">
+                  {/* Reviewers */}
+                  {pr.reviewers && (
+                    <Box width={150} display="flex" justifyContent="flex-start">
+                      <Stack direction="row" spacing={1}>
+                        {pr.reviewers &&
+                          pr.reviewers.map((r) => (
+                            <Avatar
+                              key={r.name}
+                              src={r.avatar}
+                              alt={r.name}
+                              sx={{ width: 30, height: 30 }}
+                            />
+                          ))}
+                      </Stack>
+                    </Box>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
             {/* {filteredRepos.length === 0 && (
