@@ -1,4 +1,4 @@
-import { PullRequest, Comment } from "../mockData";
+import { PullRequest, Comment } from "../entities";
 import { formatDate } from "./helper";
 
 export function exportPRsToCSV(repo: string, prs: PullRequest[]) {

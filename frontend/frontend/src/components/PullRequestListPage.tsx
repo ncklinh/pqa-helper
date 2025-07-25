@@ -16,10 +16,10 @@ import {
   TableRow,
   TableBody,
 } from "@mui/material";
-import { Comment, PullRequest } from "../mockData";
+import { Comment, PullRequest } from "../entities";
 import { exportAllCommentsToCSV, exportPRsToCSV } from "../utils/exportCSV";
 import { formatDate } from "../utils/helper";
-import { PRStateChip } from "./UiComponents";
+import { BackButton, PRStateChip } from "./UiComponents";
 
 interface Props {
   repoName: string;
@@ -122,14 +122,7 @@ export default function PRListPage({
           >
             Export Repo Comments
           </Button>
-          <Button
-            variant="outlined"
-            onClick={onBack}
-            className="outlined-button"
-            size="small"
-          >
-            ← Back
-          </Button>
+          <BackButton onBack={onBack} />
         </Box>
       </Box>
 
@@ -215,13 +208,13 @@ export default function PRListPage({
                 </TableCell>
               </TableRow>
             ))}
-            {/* {filteredRepos.length === 0 && (
+            {filteredPRs.length === 0 && (
               <TableRow>
                 <TableCell colSpan={3} align="center">
-                  Select a workspace to view repos
+                  No pull requests
                 </TableCell>
               </TableRow>
-            )} */}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

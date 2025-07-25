@@ -19,7 +19,7 @@ import {
   TextField,
   MenuItem, // 👈 Add this
 } from "@mui/material";
-import { Repo, WorkSpace } from "../mockData";
+import { Repo, WorkSpace } from "../entities";
 import { formatDate } from "../utils/helper";
 
 interface Props {

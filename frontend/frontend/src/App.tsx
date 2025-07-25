@@ -4,7 +4,7 @@ import LoginPage from "./components/LoginPage";
 import RepoListPage from "./components/RepoListPage";
 import PRListPage from "./components/PullRequestListPage";
 import PullRequestDetailPage from "./components/PullRequestDetailPage";
-import { PullRequest, Comment, Repo, WorkSpace } from "./mockData";
+import { PullRequest, Comment, Repo, WorkSpace } from "./entities";
 import {
   getWorkspaces,
   getPullRequests,

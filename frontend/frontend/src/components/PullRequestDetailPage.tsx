@@ -1,10 +1,15 @@
 // src/pages/PullRequestDetailPage.tsx
 
 import { Box, Typography, Divider, Avatar, Stack, Button } from "@mui/material";
-import { PullRequest } from "../mockData";
+import { PullRequest } from "../entities";
 import { exportPRDetailToCSV } from "../utils/exportCSV";
 import { formatDate } from "../utils/helper";
-import { PRStateChip, PRBranchChip } from "./UiComponents";
+import {
+  PRStateChip,
+  PRBranchChip,
+  ArrowForward,
+  BackButton,
+} from "./UiComponents";
 
 export default function PullRequestDetailPage({
   pr,
@@ -14,7 +19,7 @@ export default function PullRequestDetailPage({
   onBack: () => void;
 }) {
   return (
-    <Box flex={1} p={4}>
+    <Box flex={1} p={4} color={"white"}>
       {" "}
       <Box
         display="flex"
@@ -36,14 +41,7 @@ export default function PullRequestDetailPage({
           >
             Export PR Comments
           </Button>
-          <Button
-            variant="outlined"
-            onClick={onBack}
-            className="outlined-button"
-            size="small"
-          >
-            ← Back
-          </Button>
+          <BackButton onBack={onBack} />
         </Box>
       </Box>
       {/* Path + Title */}
@@ -82,6 +80,7 @@ export default function PullRequestDetailPage({
             {pr?.source.branch.name && (
               <PRBranchChip state={pr?.source.branch.name} />
             )}{" "}
+            <ArrowForward />
             {pr?.destination.branch.name && (
               <PRBranchChip state={pr?.destination.branch.name} />
             )}{" "}
