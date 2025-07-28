@@ -80,6 +80,27 @@ func (r *bitbucketRepo) GetPullRequests(workspace, repoSlug string) ([]model.Pul
 	if err := json.Unmarshal(data, &res); err != nil {
 		return nil, err
 	}
+
+	// Với mỗi PR, gọi API chi tiết để lấy reviewers và avatar
+	for i, pr := range res.Values {
+		detailURL := fmt.Sprintf("%s/repositories/%s/%s/pullrequests/%d", r.cfg.BaseURL, workspace, repoSlug, pr.ID)
+		detailData, err := r.doRequest("GET", detailURL)
+		if err != nil {
+			// Nếu lỗi, bỏ qua PR này
+			continue
+		}
+
+		var detailedPR model.PullRequest
+		if err := json.Unmarshal(detailData, &detailedPR); err != nil {
+			continue
+		}
+
+		// Cập nhật reviewers và author.avatar
+		res.Values[i].Reviewers = detailedPR.Reviewers
+		res.Values[i].Participants = detailedPR.Participants
+		res.Values[i].Author.Links = detailedPR.Author.Links
+	}
+
 	return res.Values, nil
 }
 
@@ -90,42 +111,6 @@ func (r *bitbucketRepo) GetWorkspaces() ([]model.Workspace, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	// url := "https://api.bitbucket.org/2.0/workspaces"
-	// req, err := http.NewRequest("GET", url, nil)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// req.SetBasicAuth(r.cfg.Username, r.cfg.AppPassword)
-
-	// client := &http.Client{}
-	// resp, err := client.Do(req)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// defer resp.Body.Close()
-
-	// if resp.StatusCode != http.StatusOK {
-	// 	return nil, fmt.Errorf("failed to fetch workspaces: %v", resp.Status)
-	// }
-
-	// body, _ := ioutil.ReadAll(resp.Body)
-
-	// var values []string
-
-	// if resp.StatusCode == 200 {
-	// 	var result map[string]interface{}
-	// 	json.Unmarshal(body, &result)
-	// 	for _, w := range result["values"].([]interface{}) {
-	// 		workspace := w.(map[string]interface{})
-	// 		fmt.Printf("Workspace: %s (%s)\n", workspace["name"], workspace["slug"])
-	// 		nameWorkSpace, err := workspace["name"].(string)
-	// 		fmt.Println("err: ", err)
-	// 		values = append(values, nameWorkSpace)
-	// 	}
-	// } else {
-	// 	fmt.Println("Body: ", values, " and: ", err)
-	// }
 
 	var res model.WorkspaceListResponse
 	if err := json.Unmarshal(data, &res); err != nil {

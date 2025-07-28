@@ -72,6 +72,11 @@ type PullRequest struct {
 
 	Author struct {
 		DisplayName string `json:"display_name"`
+		Links       struct {
+			Avatar struct {
+				Href string `json:"href"`
+			} `json:"avatar"`
+		} `json:"links"`
 	} `json:"author"`
 
 	Source struct {
@@ -88,6 +93,11 @@ type PullRequest struct {
 
 	Reviewers []struct {
 		DisplayName string `json:"display_name"`
+		Links       struct {
+			Avatar struct {
+				Href string `json:"href"`
+			} `json:"avatar"`
+		} `json:"links"`
 	} `json:"reviewers"`
 
 	Participants []struct {
@@ -95,6 +105,11 @@ type PullRequest struct {
 		Approved bool   `json:"approved"`
 		User     struct {
 			DisplayName string `json:"display_name"`
+			Links       struct {
+				Avatar struct {
+					Href string `json:"href"`
+				} `json:"avatar"`
+			} `json:"links"`
 		} `json:"user"`
 	} `json:"participants"`
 }
