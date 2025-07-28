@@ -65,7 +65,10 @@ export default function PullRequestDetailPage({
       <Box display="flex" alignItems="center">
         {/* Author Avatar */}
         <Box width={45}>
-          <Avatar src={pr?.authorAvatar} sx={{ width: 36, height: 36 }} />
+          <Avatar
+            src={pr?.author.links.avatar.href}
+            sx={{ width: 36, height: 36 }}
+          />
         </Box>
 
         {/* Title & Metadata */}

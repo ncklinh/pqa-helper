@@ -157,7 +157,7 @@ export default function PRListPage({
                     {/* Author Avatar */}
                     <Box width={45}>
                       <Avatar
-                        src={pr.authorAvatar}
+                        src={pr.author.links.avatar.href}
                         sx={{ width: 36, height: 36 }}
                       />
                     </Box>
@@ -197,7 +197,7 @@ export default function PRListPage({
                           pr.reviewers.map((r) => (
                             <Avatar
                               key={r.name}
-                              src={r.avatar}
+                              src={r.links.avatar.href}
                               alt={r.name}
                               sx={{ width: 30, height: 30 }}
                             />

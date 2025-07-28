@@ -20,14 +20,14 @@ export interface WorkSpace {
 export interface PullRequest {
   id: number;
   title: string;
-  author: { display_name: string };
+  author: { display_name: string; links: { avatar: { href: string } } };
   authorAvatar: string;
   branch: string;
   state: string;
   updated_on: string;
   created_on: string;
   description: string;
-  reviewers: { name: string; avatar: string }[];
+  reviewers: { name: string; links: { avatar: { href: string } } }[];
   source: {
     branch: {
       name: string;
