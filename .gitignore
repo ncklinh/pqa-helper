@@ -1,7 +1,30 @@
-# Golang
-/backend/bin
-/backend/tmp
+# Go
+/bin/
+*.exe
+*.log
 
-# OS
+# Node / NPM (React frontend)
+/frontend/frontend/node_modules/
+/frontend/frontend/dist/
+/frontend/frontend/build/
+
+# Wails build output
+/frontend/build/bin/
+/frontend/build/darwin/
+/frontend/build/windows/installer/
+/frontend/build/*.exe
+
+# Allow required assets
+!frontend/build/appicon.png
+!frontend/windows/icon.ico
+!frontend/windows/info.json
+!frontend/windows/wails.exe.manifest
+!frontend/README.md
+
+# OS & Editor
 .DS_Store
+*.log
+
+# Environment
 .env
+.env.*

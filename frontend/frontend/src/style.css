@@ -1,0 +1,120 @@
+html {
+  background-color: white;
+  text-align: center;
+  color: white;
+}
+
+body {
+  margin: 0;
+  color: white;
+  font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+}
+
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400;
+  src: local(""),
+    url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
+}
+
+#app {
+  height: 100vh;
+  text-align: center;
+}
+
+.alert-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.alert-box {
+  background: white;
+  padding: 20px;
+  margin: 100px auto;
+  width: 300px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.primary-text {
+  color: #172b4d;
+  font-size: 14px;
+}
+
+.secondary-text {
+  margin-top: 0.5rem;
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.contained-button {
+  background-color: #172b4d !important;
+  color: white !important;
+  min-width: auto;
+  height: 34px;
+  padding: 4px 10px;
+  text-transform: none;
+}
+
+.outlined-button {
+  border: 1px solid #172b4d !important;
+  color: #172b4d !important;
+  min-width: auto;
+  height: 34px;
+  padding: 4px 10px;
+  text-transform: none;
+}
+.selector {
+  min-width: 130px;
+  font-size: 0.9rem;
+}
+
+.selector .MuiOutlinedInput-root {
+  border-radius: 4px;
+  height: 34px; /* Match button height */
+  font-size: 0.9rem;
+}
+
+.selector .MuiOutlinedInput-notchedOutline {
+  border-color: #172b4d;
+}
+
+.selector .Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #172b4d;
+}
+
+.selector .MuiInputLabel-root {
+  font-size: 0.9rem;
+}
+
+.selector .MuiSelect-select {
+  padding: 8px 12px;
+}
+
+.selector .MuiMenuItem-root {
+  font-size: 0.9rem;
+}
+
+.textfield .MuiInputLabel-root {
+  font-size: 0.9rem;
+}
+
+.textfield .MuiInputBase-input {
+  font-size: 0.9rem;
+}
+
+.table-cell {
+  padding: 10px 16px !important;
+}
+
+.comment-stack {
+  padding: 8px 10px 8px 0px;
+}
