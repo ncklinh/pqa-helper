@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Avatar,
   Typography,
-  Chip,
   Paper,
   Stack,
   Button,
@@ -18,8 +17,9 @@ import {
 } from "@mui/material";
 import { Comment, PullRequest } from "../entities";
 import { exportAllCommentsToCSV, exportPRsToCSV } from "../utils/exportCSV";
-import { formatDate } from "../utils/helper";
+import { formatDateFromNow } from "../utils/helper";
 import { BackButton, PRStateChip } from "./UiComponents";
+import { MyComponent } from "./DatePicker";
 
 interface Props {
   repoName: string;
@@ -36,17 +36,27 @@ export default function PRListPage({
   onSelectPR,
   onBack,
 }: Props) {
-  // const [authorFilter, setAuthorFilter] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
 
-  // const authors = Array.from(new Set(prs.map((pr) => pr.author)));
+  const authors = Array.from(new Set(prs.map((pr) => pr.author.display_name)));
   const states = Array.from(new Set(prs.map((pr) => pr.state)));
 
   const filteredPRs = prs.filter((pr) => {
-    return (
-      // (authorFilter ? pr.author === authorFilter : true) &&
-      statusFilter ? pr.state === statusFilter : true
-    );
+    return (authorFilter ? pr.author.display_name === authorFilter : true) &&
+      statusFilter
+      ? pr.state === statusFilter
+      : true;
+  });
+
+  const prStateMap = new Map<number, string>(
+    prs.map((pr) => [pr.id, pr.state])
+  );
+
+  const filteredComments = repoComments.filter((comment) => {
+    const prState = prStateMap.get(comment.pullrequest.id);
+    return statusFilter ? prState === statusFilter : true;
   });
 
   return (
@@ -67,10 +77,11 @@ export default function PRListPage({
         {/* Filters + Actions */}
         <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
           {/* Filters */}
-          {/* <TextField
+          <TextField
             select
             size="small"
             label="Author"
+            className="selector"
             value={authorFilter}
             onChange={(e) => setAuthorFilter(e.target.value)}
             placeholder="Select author"
@@ -80,14 +91,20 @@ export default function PRListPage({
               input: { sx: { fontSize: "0.85rem" } },
             }}
           >
-            <MenuItem value="">All</MenuItem>
-            {authors.map((author) => (
-              <MenuItem key={author} value={author}>
-                {author}
+            <MenuItem value="" sx={{ fontSize: "0.8rem" }}>
+              All
+            </MenuItem>
+            {authors.map((authorName) => (
+              <MenuItem
+                key={authorName}
+                value={authorName}
+                sx={{ fontSize: "0.8rem" }}
+              >
+                {authorName}
               </MenuItem>
             ))}
-          </TextField> */}
-
+          </TextField>
+          {/* <MyComponent /> */}
           <TextField
             select
             size="small"
@@ -111,12 +128,11 @@ export default function PRListPage({
               </MenuItem>
             ))}
           </TextField>
-
           {/* Actions */}
           <Button
             variant="contained"
             color="primary"
-            onClick={() => exportAllCommentsToCSV(repoName, repoComments)}
+            onClick={() => exportAllCommentsToCSV(repoName, filteredComments)}
             className="contained-button"
             size="small"
           >
@@ -179,14 +195,14 @@ export default function PRListPage({
                       <Typography variant="caption" className="secondary-text">
                         {`${pr.author.display_name} #${
                           pr.id
-                        }, updated ${formatDate(pr.updated_on)}`}
+                        }, updated ${formatDateFromNow(pr.updated_on)}`}
                       </Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell className="table-cell">
                   {" "}
-                  {formatDate(pr.updated_on)}
+                  {formatDateFromNow(pr.updated_on)}
                 </TableCell>
                 <TableCell className="table-cell">
                   {/* Reviewers */}

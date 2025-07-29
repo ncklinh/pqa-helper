@@ -1,5 +1,5 @@
 import { PullRequest, Comment } from "../entities";
-import { formatDate } from "./helper";
+import { formatDateFromNow, formatToGMT7 } from "./helper";
 
 function escapeCSVValue(value: any): string {
   if (value == null) return "";
@@ -49,7 +49,7 @@ export function exportAllCommentsToCSV(repoName: String, comments: Comment[]) {
     [
       escapeCSVValue(comment.user.display_name),
       escapeCSVValue(comment.content.raw),
-      escapeCSVValue(formatDate(comment.created_on)),
+      escapeCSVValue(formatToGMT7(comment.created_on)),
       escapeCSVValue(comment.pullrequest.type),
       escapeCSVValue(comment.pullrequest.title),
     ].join(",")
@@ -71,22 +71,26 @@ export function exportAllCommentsToCSV(repoName: String, comments: Comment[]) {
   URL.revokeObjectURL(url);
 }
 
-export function exportPRDetailToCSV(pr: PullRequest) {
-  if (!pr) return;
+export function exportPRDetailToCSV(
+  title: string,
+  description: string,
+  comments: Comment[]
+) {
+  // if (!pr) return;
 
   const lines: string[] = [];
 
-  lines.push(`${escapeCSVValue("Title: " + pr.title)},,`);
-  lines.push(`${escapeCSVValue("Description: " + pr.description)},,`);
+  lines.push(`${escapeCSVValue("Title: " + title)},,`);
+  lines.push(`${escapeCSVValue("Description: " + description)},,`);
 
   lines.push(",,");
 
   lines.push("Username,Comment,Time");
-  const commentLines = pr.comments.map((comment) =>
+  const commentLines = comments.map((comment) =>
     [
       escapeCSVValue(comment.user.display_name),
       escapeCSVValue(comment.content.raw),
-      escapeCSVValue(formatDate(comment.created_on)),
+      escapeCSVValue(formatToGMT7(comment.created_on)),
     ].join(",")
   );
   lines.push(...commentLines);
@@ -100,7 +104,7 @@ export function exportPRDetailToCSV(pr: PullRequest) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${pr.id}_detail.csv`;
+  a.download = `pr_detail.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }

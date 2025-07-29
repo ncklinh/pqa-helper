@@ -20,7 +20,7 @@ import {
   MenuItem, // 👈 Add this
 } from "@mui/material";
 import { Repo, WorkSpace } from "../entities";
-import { formatDate } from "../utils/helper";
+import { formatDateFromNow } from "../utils/helper";
 
 interface Props {
   onSelectRepo: (repoName: string) => void;
@@ -169,7 +169,7 @@ export default function RepoListPage({
                   </Typography>
                 </TableCell>
                 <TableCell className="table-cell">
-                  {formatDate(repo.updated_on)}
+                  {formatDateFromNow(repo.updated_on)}
                 </TableCell>
                 <TableCell className="table-cell">{repo.description}</TableCell>
               </TableRow>

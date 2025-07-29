@@ -1,15 +1,25 @@
 // src/pages/PullRequestDetailPage.tsx
 
-import { Box, Typography, Divider, Avatar, Stack, Button } from "@mui/material";
-import { PullRequest } from "../entities";
+import {
+  Box,
+  Typography,
+  Divider,
+  Avatar,
+  Stack,
+  Button,
+  IconButton,
+} from "@mui/material";
+import { CommentNode, PullRequest } from "../entities";
 import { exportPRDetailToCSV } from "../utils/exportCSV";
-import { formatDate } from "../utils/helper";
+import { buildCommentTree, formatDateFromNow } from "../utils/helper";
 import {
   PRStateChip,
   PRBranchChip,
   ArrowForward,
   BackButton,
 } from "./UiComponents";
+import { useState } from "react";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 export default function PullRequestDetailPage({
   pr,
@@ -18,6 +28,8 @@ export default function PullRequestDetailPage({
   pr: PullRequest | null;
   onBack: () => void;
 }) {
+  const commentTree = buildCommentTree(pr?.comments ?? []);
+
   return (
     <Box flex={1} p={4} color={"white"}>
       {" "}
@@ -35,11 +47,25 @@ export default function PullRequestDetailPage({
           <Button
             variant="contained"
             color="primary"
-            onClick={() => pr && exportPRDetailToCSV(pr)}
+            onClick={() =>
+              pr &&
+              exportPRDetailToCSV(pr?.title, pr?.description, pr?.comments)
+            }
             className="contained-button"
             size="small"
           >
-            Export PR Comments
+            Export All Comments
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() =>
+              pr && exportPRDetailToCSV(pr?.title, pr?.description, commentTree)
+            }
+            className="outlined-button"
+            size="small"
+          >
+            Export Root Comments
           </Button>
           <BackButton onBack={onBack} />
         </Box>
@@ -91,17 +117,14 @@ export default function PullRequestDetailPage({
           </Box>
           <Typography variant="caption" className="secondary-text">
             {pr &&
-              `${pr?.author.display_name} #${pr?.id} • Created ${formatDate(
+              `${pr?.author.display_name} #${
+                pr?.id
+              } • Created ${formatDateFromNow(
                 pr.created_on
-              )} • Last updated ${formatDate(pr.updated_on)}`}
+              )} • Last updated ${formatDateFromNow(pr.updated_on)}`}
           </Typography>
         </Box>
       </Box>
-      {/* <Box textAlign="left" flex={1}>
-        <Typography variant="caption" color="textSecondary" align="left">
-          • Created {pr?.created_on} • Last updated {pr?.updated_on}
-        </Typography>
-      </Box> */}
       <Divider sx={{ my: 3 }} />
       {/* Description */}
       <Typography
@@ -121,46 +144,80 @@ export default function PullRequestDetailPage({
         Activity
       </Typography>
       <Box mt={2}>
-        {pr?.comments &&
-          pr?.comments.map((comment, idx) => (
-            <Stack
-              direction="row"
-              spacing={2}
-              alignItems="top"
-              key={idx}
-              className="comment-stack"
-            >
-              <Box width={40}>
-                <Avatar
-                  src={comment.user.links.avatar.href}
-                  sx={{ width: 36, height: 36 }}
-                />
-              </Box>
-              <Box>
-                <Typography
-                  variant="subtitle2"
-                  className="primary-text"
-                  align="left"
-                  sx={{ textAlign: "left" }}
-                >
-                  {" "}
-                  <span style={{ fontSize: "0.9rem" }}>
-                    <strong>{comment.user.display_name}</strong>{" "}
-                    {formatDate(comment.created_on)}
-                  </span>
-                </Typography>
-
-                <Typography
-                  variant="caption"
-                  className="secondary-text"
-                  align="left"
-                >
-                  {comment.content.raw}
-                </Typography>
-              </Box>
-            </Stack>
-          ))}
+        {commentTree.map((rootComment) => (
+          <CommentThread key={rootComment.id} comment={rootComment} />
+        ))}
       </Box>
+    </Box>
+  );
+}
+
+function CommentThread({ comment }: { comment: CommentNode }) {
+  const [showReplies, setShowReplies] = useState(true);
+
+  const toggleReplies = () => {
+    setShowReplies((prev) => !prev);
+  };
+
+  const hasReplies = comment.replies.length > 0;
+
+  return (
+    <Box ml={comment.parent ? 4 : 0} mt={2}>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="flex-start"
+        key={comment.id}
+        className="comment-stack"
+      >
+        <Box width={40}>
+          <Avatar
+            src={comment.user.links.avatar.href}
+            sx={{ width: 36, height: 36 }}
+          />
+        </Box>
+
+        <Box flex={1}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography
+              variant="subtitle2"
+              className="primary-text"
+              sx={{ textAlign: "left", fontSize: "0.9rem" }}
+            >
+              <strong>{comment.user.display_name}</strong>{" "}
+              {formatDateFromNow(comment.created_on)}
+            </Typography>
+
+            {hasReplies && (
+              <IconButton size="small" onClick={toggleReplies}>
+                {showReplies ? (
+                  <ExpandLess fontSize="small" />
+                ) : (
+                  <ExpandMore fontSize="small" />
+                )}
+              </IconButton>
+            )}
+          </Stack>
+
+          <Typography
+            variant="caption"
+            className="secondary-text"
+            align="left"
+            sx={{ whiteSpace: "pre-wrap" }}
+          >
+            {comment.content.raw}
+          </Typography>
+        </Box>
+      </Stack>
+
+      {showReplies &&
+        comment.replies.map((child) => (
+          <CommentThread key={child.id} comment={child} />
+        ))}
     </Box>
   );
 }
