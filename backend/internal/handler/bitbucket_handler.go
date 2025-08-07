@@ -2,7 +2,7 @@ package handler
 
 import (
 	"backend/config"
-	"backend/internal/service"
+	"backend/internal/service/scm"
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
@@ -22,11 +22,11 @@ var jwtSecret = []byte("your_secret_key")                // đổi thành khóa 
 var secrect = []byte("my-very-secure-key-1234567890123") // length = 32 bytes
 
 type BitbucketHandler struct {
-	service service.BitbucketService
+	service scm.SCMService
 	cfg     *config.BitbucketConfig
 }
 
-func NewBitbucketHandler(s service.BitbucketService, cf *config.BitbucketConfig) *BitbucketHandler {
+func NewBitbucketHandler(s scm.SCMService, cf *config.BitbucketConfig) *BitbucketHandler {
 	return &BitbucketHandler{service: s, cfg: cf}
 }
 

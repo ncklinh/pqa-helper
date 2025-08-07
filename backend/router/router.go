@@ -1,11 +1,7 @@
 package router
 
 import (
-	"backend/config"
-	"backend/internal/handler"
-	"backend/internal/middleware"
-	"backend/internal/repository"
-	"backend/internal/service"
+	"backend/setup"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -24,22 +20,17 @@ func SetupRouter() *gin.Engine {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	bitbucketCfg := config.NewBitbucketConfig()
-	bitbucketRepo := repository.NewBitbucketRepo(bitbucketCfg)
-	bitbucketService := service.NewBitbucketService(bitbucketRepo)
-	bitbucketHandler := handler.NewBitbucketHandler(bitbucketService, bitbucketCfg)
+	bb := setup.InitBitbucket()
 
-	bitbutketMiddleware := middleware.NewBitbucketMiddleware(bitbucketCfg)
+	r.POST("/bitbucket/login", bb.Handler.LoginAndCacheCredential)
 
-	r.POST("/bitbucket/login", bitbucketHandler.LoginAndCacheCredential)
-
-	bitbucketGroup := r.Group("/bitbuckets", bitbutketMiddleware.RequireBitbucketAuth())
+	bitbucketGroup := r.Group("/bitbuckets", bb.Middleware)
 	{
-		bitbucketGroup.GET("/api/workspace", bitbucketHandler.GetWorkspaces)
-		bitbucketGroup.GET("/api/repos", bitbucketHandler.GetRepositories)
-		bitbucketGroup.GET("/api/pullrequests", bitbucketHandler.GetPullRequests)
-		bitbucketGroup.GET("/bitbucket/:workspace/:repo/pullrequests/:prID/comments", bitbucketHandler.GetPRComments)
-		bitbucketGroup.GET("/bitbucket/:workspace/:repo/comments", bitbucketHandler.GetRepoComments)
+		bitbucketGroup.GET("/api/workspace", bb.Handler.GetWorkspaces)
+		bitbucketGroup.GET("/api/repos", bb.Handler.GetRepositories)
+		bitbucketGroup.GET("/api/pullrequests", bb.Handler.GetPullRequests)
+		bitbucketGroup.GET("/bitbucket/:workspace/:repo/pullrequests/:prID/comments", bb.Handler.GetPRComments)
+		bitbucketGroup.GET("/bitbucket/:workspace/:repo/comments", bb.Handler.GetRepoComments)
 	}
 
 	return r
