@@ -18,7 +18,7 @@ type BitbucketComponents struct {
 func InitBitbucket() BitbucketComponents {
 	bitbucketCfg := config.NewBitbucketConfig()
 	bitbucketRepo := repository.NewBitbucketRepo(bitbucketCfg)
-	scmService := bitbucket.New(bitbucketRepo)
+	scmService := bitbucket.NewBitbucketService(bitbucketRepo)
 
 	return BitbucketComponents{
 		Handler:    handler.NewBitbucketHandler(scmService, bitbucketCfg),

@@ -5,30 +5,30 @@ import (
 	"backend/internal/repository"
 )
 
-type Client struct {
+type BitbucketService struct {
 	repo repository.BitbucketRepository
 }
 
-func New(repo repository.BitbucketRepository) *Client {
-	return &Client{repo}
+func NewBitbucketService(repo repository.BitbucketRepository) *BitbucketService {
+	return &BitbucketService{repo}
 }
 
-func (c *Client) ListRepositories(workspace string) ([]model.Repository, error) {
-	return c.repo.GetRepositories(workspace)
+func (s *BitbucketService) GetRepositories(workspace string) ([]model.Repository, error) {
+	return s.repo.GetRepositories(workspace)
 }
 
-func (c *Client) ListPullRequests(workspace, repoSlug string) ([]model.PullRequest, error) {
-	return c.repo.GetPullRequests(workspace, repoSlug)
+func (s *BitbucketService) GetPullRequests(workspace, repoSlug string) ([]model.PullRequest, error) {
+	return s.repo.GetPullRequests(workspace, repoSlug)
 }
 
-func (c *Client) GetAllWorkspaces() ([]model.Workspace, error) {
-	return c.repo.GetWorkspaces()
+func (s *BitbucketService) GetAllWorkspaces() ([]model.Workspace, error) {
+	return s.repo.GetWorkspaces()
 }
 
-func (c *Client) GetPRComments(workspace, repoSlug, pullRequestID string) ([]map[string]interface{}, error) {
-	return c.repo.GetPRComments(workspace, repoSlug, pullRequestID)
+func (s *BitbucketService) GetPRComments(workspace, repoSlug, pullRequestID string) ([]map[string]interface{}, error) {
+	return s.repo.GetPRComments(workspace, repoSlug, pullRequestID)
 }
 
-func (c *Client) GetRepoComments(workspace, repoSlug string) ([]map[string]interface{}, error) {
-	return c.repo.GetRepoComments(workspace, repoSlug)
+func (s *BitbucketService) GetRepoComments(workspace, repoSlug string) ([]map[string]interface{}, error) {
+	return s.repo.GetRepoComments(workspace, repoSlug)
 }

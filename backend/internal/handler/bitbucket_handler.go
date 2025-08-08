@@ -38,7 +38,7 @@ func (h *BitbucketHandler) GetRepositories(c *gin.Context) {
 		return
 	}
 
-	repos, err := h.service.ListRepositories(workspace)
+	repos, err := h.service.GetRepositories(workspace)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -56,7 +56,7 @@ func (h *BitbucketHandler) GetPullRequests(c *gin.Context) {
 		return
 	}
 
-	prs, err := h.service.ListPullRequests(workspace, repo)
+	prs, err := h.service.GetPullRequests(workspace, repo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
